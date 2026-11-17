@@ -46,12 +46,12 @@
   #cover{position:absolute;inset:0;z-index:2;transform-origin:0% 50%;backface-visibility:hidden;will-change:transform}
   #cover .shade{position:absolute;inset:0;pointer-events:none;opacity:0;z-index:4;
     background:linear-gradient(90deg, rgba(70,20,35,.5) 0%, transparent 30%)}
-  #cover.opening{transition:transform 1.9s cubic-bezier(.38,.12,.3,1);transform:rotateY(-104deg)}
+  #cover.opening{transition:transform 1.9s cubic-bezier(.38,.12,.3,1);transform:rotateY(-104deg);pointer-events:none}
   #cover.opening .shade{transition:opacity 1.9s ease;opacity:1}
   #cover.closing{transition:transform 1.6s cubic-bezier(.38,.12,.3,1);transform:rotateY(0deg)}
   #cover.gone{display:none}
-  .corner{position:absolute;bottom:14px;z-index:5;border:none;background:transparent;cursor:pointer;
-    font-family:'Jost',sans-serif;font-size:10px;letter-spacing:.26em;text-transform:uppercase;color:#a34a63;padding:12px 14px}
+  .corner{position:absolute;bottom:10px;z-index:5;border:none;background:transparent;cursor:pointer;
+    font-family:'Jost',sans-serif;font-size:10px;letter-spacing:.26em;text-transform:uppercase;color:#a34a63;padding:18px 24px}
   .corner:active{opacity:.6}
   #backBtn{left:6px}
 </style>
@@ -106,20 +106,23 @@
       });
     }catch(e){}
   }
+  var openTimer = null, closeTimer = null;
   function openBook(){
     if (opened) return; opened = true;
+    clearTimeout(closeTimer);
     chime();
     if (window.__dustStop) window.__dustStop();
     page2El.classList.remove('lit'); void page2El.offsetWidth; page2El.classList.add('lit');
     coverEl.classList.remove('closing'); coverEl.classList.add('opening');
-    setTimeout(function(){ coverEl.classList.add('gone'); }, 1980);
+    openTimer = setTimeout(function(){ coverEl.classList.add('gone'); }, 1980);
   }
   function closeBook(){
     if (!opened) return; opened = false;
+    clearTimeout(openTimer);
     coverEl.classList.remove('gone'); void coverEl.offsetWidth;
     coverEl.classList.remove('opening'); coverEl.classList.add('closing');
     if (window.__dustStart) window.__dustStart();
-    setTimeout(function(){ coverEl.classList.remove('closing'); }, 1680);
+    closeTimer = setTimeout(function(){ coverEl.classList.remove('closing'); }, 1680);
   }
   document.getElementById('openBtn').addEventListener('click', openBook);
   document.getElementById('backBtn').addEventListener('click', closeBook);
