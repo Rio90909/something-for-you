@@ -35,6 +35,12 @@
   #page2::after{content:"";position:absolute;inset:17px;border:1px solid rgba(178,132,62,.3);border-radius:5px;pointer-events:none}
   #page2 .p2script{font-family:'Great Vibes',cursive;font-size:clamp(30px,9vw,40px);line-height:1.35;color:#a34a63;position:relative;z-index:2}
   #page2 .p2small{margin-top:2.4dvh;font-family:'Jost',sans-serif;font-size:10px;letter-spacing:.34em;text-transform:uppercase;color:#a06a52;position:relative;z-index:2}
+  #page2 .p2heart{position:relative;z-index:2;margin-bottom:2.6dvh}
+  #page2 .p2divider{display:flex;align-items:center;gap:10px;margin-top:3.2dvh;position:relative;z-index:2}
+  #page2 .p2divider .line{width:52px;height:1px;background:linear-gradient(90deg,transparent,#b2843e)}
+  #page2 .p2divider .line.r{background:linear-gradient(90deg,#b2843e,transparent)}
+  #page2 .p2divider .dia{width:7px;height:7px;background:#b2843e;transform:rotate(45deg)}
+  #page2 .p2petal{position:absolute;background:rgba(230,150,172,.32);border-radius:100% 4px 100% 4px;z-index:1}
   #page2 .glow{position:absolute;inset:0;z-index:1;pointer-events:none;opacity:0;
     background:radial-gradient(75% 55% at 50% 42%, rgba(255,196,120,.5) 0%, rgba(255,176,150,.18) 55%, transparent 78%)}
   #page2.lit .glow{animation:glowA 1.9s ease-out forwards}
@@ -59,8 +65,12 @@
 <body>
 <div class="stage">
   <div id="page2">
+    <div class="p2heart"><svg width="26" height="24" viewBox="0 0 26 24"><path d="M13 22C6 16.5 1.5 12.3 1.5 7.6 1.5 4.2 4 1.8 7.2 1.8c2.2 0 4.3 1.3 5.8 3.4 1.5-2.1 3.6-3.4 5.8-3.4 3.2 0 5.7 2.4 5.7 5.8 0 4.7-4.5 8.9-11.5 14.4Z" fill="#b2843e"/></svg></div>
     <p class="p2script">This little book was made<br>for one person only&hellip;</p>
-    <p class="p2small">Page two &middot; coming to life</p>
+    <div class="p2divider"><div class="line"></div><div class="dia"></div><div class="line r"></div></div>
+    <div class="p2petal" style="width:44px;height:30px;left:9%;bottom:11%;transform:rotate(38deg)"></div>
+    <div class="p2petal" style="width:34px;height:23px;right:10%;bottom:15%;transform:rotate(-52deg)"></div>
+    <div class="p2petal" style="width:26px;height:18px;right:16%;bottom:9%;transform:rotate(20deg)"></div>
     <div class="glow"></div>
     <div class="sweep"></div>
     <button class="corner" id="backBtn" type="button">&#8592; Cover</button>
