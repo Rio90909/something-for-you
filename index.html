@@ -56,10 +56,10 @@
   #cover.opening .shade{transition:opacity 1.9s ease;opacity:1}
   #cover.closing{transition:transform 1.6s cubic-bezier(.38,.12,.3,1);transform:rotateY(0deg)}
   #cover.gone{display:none}
-  .corner{position:absolute;bottom:10px;z-index:5;border:none;background:transparent;cursor:pointer;
-    font-family:'Jost',sans-serif;font-size:10px;letter-spacing:.26em;text-transform:uppercase;color:#a34a63;padding:18px 24px}
+  .corner{position:absolute;bottom:16px;z-index:5;border:1.5px solid rgba(255,255,255,.75);background:#111111;cursor:pointer;border-radius:999px;box-shadow:0 6px 18px rgba(20,8,12,.42);
+    font-family:'Jost',sans-serif;font-size:11.5px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:#fff;padding:13px 22px}
   .corner:active{opacity:.6}
-  #backBtn{left:6px}
+  #backBtn{left:14px}
   .pagenum{position:absolute;bottom:28px;left:50%;transform:translateX(-50%);z-index:5;font-family:'Jost',sans-serif;font-size:11px;letter-spacing:.3em;color:#a06a52}
   #nextBtn{right:6px}
   #page3{position:absolute;inset:0;z-index:1;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:6dvh 12vw 14dvh;background:linear-gradient(180deg,#fdf6ea,#f7ead9 60%,#f3e2cd)}
@@ -75,8 +75,8 @@
   #page3 .turn{margin-top:2.4dvh;font-family:'Jost',sans-serif;font-size:10px;letter-spacing:.26em;text-transform:uppercase;color:#a34a63;animation-delay:2.6s}
   #page3 .from{margin-top:2.2dvh;font-family:'Jost',sans-serif;font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:#a06a52;animation-delay:3s}
   #page3 .from b{color:#a34a63;font-weight:500}
-  #backBtn3{left:6px}
-  #nextBtn3{right:6px}
+  #backBtn3{left:14px}
+  #nextBtn3{right:14px}
   #page3{transform-origin:0% 50%;backface-visibility:hidden}
   #page3 .shade{position:absolute;inset:0;pointer-events:none;opacity:0;z-index:4;background:linear-gradient(90deg, rgba(70,20,35,.5) 0%, transparent 30%)}
   #page3.turning{transition:transform .95s cubic-bezier(.38,.12,.3,1);transform:rotateY(-102deg);pointer-events:none;z-index:3}
@@ -104,8 +104,8 @@
   #page4 .wishnum{font-family:'Jost',sans-serif;font-size:9.5px;letter-spacing:.32em;text-transform:uppercase;color:#a06a52}
   #page4 .wishtext{font-family:'Playfair Display',serif;font-style:italic;font-size:16.5px;line-height:1.55;color:#7c2d46;margin-top:6px}
   #page4 .burstH4{position:absolute;z-index:6;pointer-events:none}
-  #backBtn4{left:6px}
-  #nextBtn4{right:6px}
+  #backBtn4{left:14px}
+  #nextBtn4{right:14px}
   #page4{transform-origin:0% 50%;backface-visibility:hidden}
   #page4 .shade{position:absolute;inset:0;pointer-events:none;opacity:0;z-index:4;background:linear-gradient(90deg, rgba(70,20,35,.5) 0%, transparent 30%)}
   #page4.turning{transition:transform .95s cubic-bezier(.38,.12,.3,1);transform:rotateY(-102deg);pointer-events:none;z-index:3}
@@ -146,7 +146,7 @@
   #g5bfly{position:absolute;z-index:7;font-size:24px;background:none;border:none;cursor:pointer;-webkit-tap-highlight-color:transparent}
   #page5 .burstH5{position:absolute;z-index:25;pointer-events:none}
   #page5 .plusone5{position:absolute;z-index:26;font-size:17px;pointer-events:none;text-shadow:0 2px 8px rgba(0,0,0,.4)}
-  #backBtn5{left:6px}
+  #backBtn5{left:14px}
   #petals4{z-index:1}
   #page2{transform-origin:0% 50%;backface-visibility:hidden}
   #page2 .shade{position:absolute;inset:0;pointer-events:none;opacity:0;z-index:4;background:linear-gradient(90deg, rgba(70,20,35,.5) 0%, transparent 30%)}
@@ -748,6 +748,7 @@
     page5.addEventListener('pointermove', function(e){ if (!drag || drag.btn) return; setTx(views[cur], drag.tx0 + (e.clientX - drag.x)); });
     page5.addEventListener('pointerup', function(e){
       if (!drag) return;
+      if (window.__pageTurnSwipe && performance.now() - window.__pageTurnSwipe < 80){ drag = null; return; }
       var dt = performance.now() - drag.t, dx = e.clientX - drag.x, dy = e.clientY - drag.y;
       var dist = Math.sqrt(dx * dx + dy * dy);
       if (!drag.btn && dt < 380 && Math.abs(dx) > 70 && Math.abs(dx) > Math.abs(dy)) gust();
@@ -758,6 +759,40 @@
     bfly.animate([{ left: '30px', top: '300px' }, { left: '180px', top: '210px' }, { left: '290px', top: '330px' }, { left: '150px', top: '430px' }, { left: '30px', top: '300px' }], { duration: 15000, iterations: Infinity, easing: 'ease-in-out' });
     bfly.addEventListener('click', function(){ var c = centerOf(bfly); burst5(c.x, c.y, 12); showPill('Even the butterflies come to see you \uD83E\uDD8B', false); });
     window.addEventListener('resize', function(){ if (gardenOn) layout(); });
+  })();
+
+  // — Swipe to turn the pages, like a real book —
+  (function(){
+    var stage = document.querySelector('.stage');
+    var startX = 0, startY = 0, startT = 0, tracking = false;
+    function currentPage(){
+      if (!opened) return 0;
+      if (page5El.style.display === 'block') return 5;
+      if (page4El.style.display === 'flex') return 4;
+      if (page3El.style.display === 'flex') return 3;
+      return 2;
+    }
+    stage.addEventListener('pointerdown', function(e){
+      tracking = true; startX = e.clientX; startY = e.clientY; startT = performance.now();
+    }, true);
+    stage.addEventListener('pointerup', function(e){
+      if (!tracking) return; tracking = false;
+      if (turning || !opened) return;
+      if (e.target.closest && e.target.closest('button')) return;
+      var dx = e.clientX - startX, dy = e.clientY - startY, dt = performance.now() - startT;
+      var page = currentPage();
+      if (!page) return;
+      var need = (page === 5) ? 190 : 80;
+      if (dt > 600 || Math.abs(dx) < need || Math.abs(dx) < Math.abs(dy) * 1.6) return;
+      window.__pageTurnSwipe = performance.now();
+      if (dx < 0){
+        var nb = { 2: 'nextBtn', 3: 'nextBtn3', 4: 'nextBtn4' }[page];
+        if (nb) document.getElementById(nb).click();
+      } else {
+        var bb = { 2: 'backBtn', 3: 'backBtn3', 4: 'backBtn4', 5: 'backBtn5' }[page];
+        if (bb) document.getElementById(bb).click();
+      }
+    }, true);
   })();
 </script>
 </body>
