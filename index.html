@@ -347,7 +347,7 @@
   coverHearts.start();
 
   // — Music box: Happy Birthday + a soft love waltz, made in code —
-  var NOTE={C4:261.63,E4:329.63,'F#4':369.99,G4:392.00,'G#4':415.30,A4:440.00,B4:493.88,'C#5':554.37,C5:523.25,D5:587.33,'D#5':622.25,E5:659.25,F5:698.46,'F#5':739.99,G5:783.99,A5:880.00};
+  var NOTE={C4:261.63,E4:329.63,'F#4':369.99,G4:392.00,'G#4':415.30,A4:440.00,B4:493.88,'C#5':554.37,C5:523.25,D5:587.33,'D#5':622.25,E5:659.25,F5:698.46,'F#5':739.99,G5:783.99,A5:880.00,B5:987.77,C6:1046.50};
   var HB=[['G4',.75],['G4',.25],['A4',1],['G4',1],['C5',1],['B4',1.75],[0,.25],['G4',.75],['G4',.25],['A4',1],['G4',1],['D5',1],['C5',1.75],[0,.25],['G4',.75],['G4',.25],['G5',1],['E5',1],['C5',1],['B4',1],['A4',1.75],[0,.25],['F5',.75],['F5',.25],['E5',1],['C5',1],['D5',1],['C5',2],[0,1]];
   var FE=[['E5',.5],['D#5',.5],['E5',.5],['D#5',.5],['E5',.5],['B4',.5],['D5',.5],['C5',.5],['A4',1],[0,.5],['C4',.5],['E4',.5],['A4',.5],['B4',1],[0,.5],['E4',.5],['G#4',.5],['B4',.5],['C5',1],[0,.5],['E4',.5],['E5',.5],['D#5',.5],['E5',.5],['D#5',.5],['E5',.5],['B4',.5],['D5',.5],['C5',.5],['A4',1],[0,.5],['C4',.5],['E4',.5],['A4',.5],['B4',1],[0,.5],['E4',.5],['C5',.5],['B4',.5],['A4',1.5],[0,.5]];
   var CANON=[['F#5',1],['E5',1],['D5',1],['C#5',1],['B4',1],['A4',1],['B4',1],['C#5',1],['D5',1],['C#5',1],['B4',1],['A4',1],['G4',1],['F#4',1],['G4',1],['E4',1]];
@@ -355,28 +355,45 @@
   var MOON=[['G#4',.34],['C#5',.34],['E5',.34],['G#4',.34],['C#5',.34],['E5',.34],['G#4',.34],['C#5',.34],['E5',.34],['G#4',.34],['C#5',.34],['E5',.34],['A4',.34],['C#5',.34],['E5',.34],['A4',.34],['C#5',.34],['E5',.34],['G#4',.34],['C#5',.34],['E5',.34],['G#4',.34],['C#5',.34],['E5',.34],['F#4',.34],['C#5',.34],['E5',.34],['F#4',.34],['C#5',.34],['E5',.34],['G#4',.34],['C#5',.34],['E5',.34],['G#4',.34],['C#5',.34],['E5',.34]];
   var LOVE=[['C5',1],['E5',1],['G5',1],['E5',1],['A5',1.5],['G5',.5],['E5',1],['D5',1],['E5',1],['C5',2],[0,1],['D5',1],['F5',1],['A5',1],['F5',1],['G5',1.5],['E5',.5],['D5',1],['B4',1],['C5',3],[0,1]];
   var RELAX=[['G4',1],['B4',1],['D5',1],['B4',1],['C5',1.5],['B4',.5],['A4',1],['B4',1],['G4',2],[0,1],['E4',1],['G4',1],['B4',1],['G4',1],['A4',1.5],['B4',.5],['D5',1],['B4',1],['G4',3],[0,1]];
-  var TRACKS=[{b:.40,n:HB},{b:.34,n:FE},{b:.45,n:CANON},{b:.42,n:GREEN},{b:.46,n:LOVE},{b:.50,n:MOON},{b:.50,n:RELAX}];
-  var PLAY=[];
-  TRACKS.forEach(function(tr){ tr.n.forEach(function(s){ PLAY.push([s[0], s[1]*tr.b]); }); PLAY.push([0, 1.4]); });
-  var musicTimer=null, musicIdx=0, musicNext=0, musicWanted=true;
+  var GYM=[['D5',1],['F#5',1],['A4',1],['F#5',2],['E5',1],['C#5',1],['E5',1],['A4',1],['D5',2],['C#5',1],['B4',1],['D5',1],['G4',1],['B4',2],['A4',1],['C#5',1],['E5',1],['A4',1],['F#5',2],['E5',1],['D5',3],[0,1]];
+  var SWAN=[['D5',1.5],['F#5',.5],['A5',1],['G5',1],['F#5',1],['E5',1],['D5',1.5],['C#5',.5],['B4',1],['A4',1],['B4',1],['C#5',1],['D5',3],[0,1]];
+  var BREEZE=[['E5',1],['D5',.5],['C5',.5],['A4',1],['G4',1],['A4',1],['C5',1],['E5',1.5],['D5',.5],['B4',1],['G4',1],['A4',1],['B4',1],['D5',1],['C5',2],[0,1],['E5',1],['G5',.5],['E5',.5],['D5',1],['C5',1],['A4',1],['B4',1],['C5',3],[0,1]];
+  var ROSE2=[['A4',1],['C5',1],['E5',1],['A5',1.5],['G5',.5],['E5',1],['F5',1],['E5',1],['D5',1.5],['B4',.5],['D5',1],['G4',1],['B4',1],['D5',1.5],['C5',.5],['B4',1],['A4',1],['C5',1],['E5',2],[0,1]];
+  var STAR=[['C5',.5],['E5',.5],['G5',.5],['B5',.5],['C6',1],['B5',.5],['G5',.5],['A5',.5],['G5',.5],['E5',.5],['D5',.5],['E5',1],['G5',1],[0,.5],['C5',.5],['E5',.5],['G5',.5],['B5',.5],['C6',1.5],['B5',.5],['A5',.5],['G5',.5],['E5',.5],['D5',.5],['C5',2],[0,1]];
+  var TRACKS=[{b:.40,n:HB},{b:.34,n:FE},{b:.45,n:CANON},{b:.44,n:BREEZE},{b:.42,n:GREEN},{b:.50,n:SWAN},{b:.46,n:LOVE},{b:.55,n:GYM},{b:.50,n:MOON},{b:.46,n:ROSE2},{b:.50,n:RELAX},{b:.40,n:STAR}];
+  var musicTimer=null, musicWanted=true, musicGain=null, trackIdx=0, noteIdx=0, musicNext=0, trackStart=0;
   function boxNote(f, t, dur){
     var o1=actx.createOscillator(), o2=actx.createOscillator(), g=actx.createGain(), g2=actx.createGain();
     o1.type='sine'; o1.frequency.value=f; o2.type='sine'; o2.frequency.value=f*2; g2.gain.value=.32;
     var len=Math.max(dur, .9);
     g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(.15, t+.008); g.gain.exponentialRampToValueAtTime(.0001, t+len);
-    o1.connect(g); o2.connect(g2); g2.connect(g); g.connect(actx.destination);
+    o1.connect(g); o2.connect(g2); g2.connect(g); g.connect(musicGain || actx.destination);
     o1.start(t); o2.start(t); o1.stop(t+len+.1); o2.stop(t+len+.1);
   }
   function startMusic(){
     if (!musicWanted || musicTimer) return;
     actx = actx || new (window.AudioContext || window.webkitAudioContext)();
     if (actx.state === 'suspended') actx.resume();
-    musicIdx=0; musicNext=actx.currentTime+.1;
+    if (!musicGain){ musicGain=actx.createGain(); musicGain.gain.value=1; musicGain.connect(actx.destination); }
+    trackIdx=0; noteIdx=0; musicNext=actx.currentTime+.1; trackStart=musicNext;
     musicTimer=setInterval(function(){
-      while (musicNext < actx.currentTime + .6){
-        var step=PLAY[musicIdx % PLAY.length]; musicIdx++;
-        var dur=step[1];
-        if (step[0]) boxNote(NOTE[step[0]], musicNext, dur);
+      var now=actx.currentTime;
+      if (now - trackStart > 30 && musicNext <= now + .65){
+        trackIdx=(trackIdx+1)%TRACKS.length; noteIdx=0; musicNext=now+.35; trackStart=musicNext;
+        musicGain.gain.cancelScheduledValues(now);
+        musicGain.gain.setValueAtTime(musicGain.gain.value, now);
+        musicGain.gain.linearRampToValueAtTime(.15, now+.3);
+        musicGain.gain.linearRampToValueAtTime(1, musicNext+.5);
+      }
+      while (musicNext < now + .6){
+        var tr=TRACKS[trackIdx];
+        if (noteIdx >= tr.n.length){
+          trackIdx=(trackIdx+1)%TRACKS.length; noteIdx=0;
+          musicNext=Math.max(musicNext+.8, now+.1); trackStart=musicNext;
+          continue;
+        }
+        var s=tr.n[noteIdx++]; var dur=s[1]*tr.b;
+        if (s[0]) boxNote(NOTE[s[0]], musicNext, dur);
         musicNext += dur;
       }
     }, 200);
