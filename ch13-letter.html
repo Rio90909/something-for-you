@@ -15,6 +15,7 @@ body{background:#e9dcc8;font-family:'Playfair Display',serif}
   background:radial-gradient(120% 60% at 50% 0%, #fffdf6 0%, rgba(255,253,246,0) 55%),linear-gradient(180deg,#fdf6ea 0%,#f9ecdc 55%,#f4e3d0 100%)}
 #page13::before{content:"";position:absolute;inset:12px;border:2px solid rgba(178,132,62,.55);border-radius:8px;pointer-events:none;z-index:6}
 #page13::after{content:"";position:absolute;inset:17px;border:1px solid rgba(178,132,62,.3);border-radius:5px;pointer-events:none;z-index:6}
+#motes{position:absolute;inset:0;z-index:1;pointer-events:none}
 .chaphead{position:absolute;top:4.5dvh;left:0;right:0;z-index:4;font-family:'Jost',sans-serif;font-size:11px;letter-spacing:.38em;text-transform:uppercase;color:#774628}
 main{position:relative;z-index:2;flex:1;width:100%;min-height:0;display:flex;flex-direction:column;align-items:center;padding:10dvh 8vw 7.5dvh}
 
@@ -23,16 +24,21 @@ main{position:relative;z-index:2;flex:1;width:100%;min-height:0;display:flex;fle
 #envScene.gone{opacity:0;transform:scale(.96);pointer-events:none}
 #whisper{font-style:italic;font-size:16.5px;line-height:1.6;color:#6e2f2a;max-width:270px;opacity:0;transform:translateY(8px);transition:opacity 1.2s ease,transform 1.2s ease}
 #whisper.show{opacity:1;transform:none}
-#env{position:relative;width:min(80vw,310px);aspect-ratio:3/2;margin-top:4.5dvh;perspective:1000px}
+#whisper.bye{opacity:0 !important;transform:translateY(-6px);transition:opacity .3s ease,transform .3s ease}
+#env{position:relative;width:min(80vw,310px);aspect-ratio:3/2;margin-top:4.5dvh;perspective:1000px;cursor:pointer}
 .env-back{position:absolute;inset:0;border-radius:10px;background:linear-gradient(160deg,#fdfaf2,#f1e3cb);border:1px solid rgba(178,132,62,.35);box-shadow:0 18px 34px rgba(122,74,32,.18)}
 .env-paper{position:absolute;left:5%;right:5%;top:6%;bottom:12%;border-radius:4px;border:1px solid rgba(178,132,62,.3);
   background:repeating-linear-gradient(180deg,#fffef9 0,#fffef9 15px,#f3ead6 15px,#f3ead6 16px),#fffef9;
-  transition:transform 1s ease .2s}
-#env.opening .env-paper{transform:translateY(-30%)}
+  transition:transform 1.15s cubic-bezier(.3,.7,.25,1) .25s,opacity .55s ease}
+#env.opening .env-paper{transform:translateY(-58%)}
+#env .env-back,#env .env-inner,#env .env-front,#env .env-lines{transition:opacity .65s ease,transform .65s ease}
+#env.retreat .env-back,#env.retreat .env-inner,#env.retreat .env-front,#env.retreat .env-lines{opacity:0;transform:translateY(24px)}
+#env.retreat .env-flap{opacity:0}
+#env.retreat .env-paper{transform:translateY(-58%) scale(1.04);opacity:0;transition:transform .6s ease,opacity .55s ease .12s}
 .env-inner{position:absolute;inset:0;border-radius:10px;background:linear-gradient(160deg,#fdfaf2,#f1e3cb);z-index:2}
 .env-front{position:absolute;inset:0;border-radius:0 0 10px 10px;clip-path:polygon(0 34%,50% 70%,100% 34%,100% 100%,0 100%);background:linear-gradient(205deg,#fbf5e8,#efe0c4);z-index:3}
 .env-lines{position:absolute;inset:0;width:100%;height:100%;z-index:4;pointer-events:none}
-.env-flap{position:absolute;left:0;right:0;top:0;height:57%;z-index:5;transform-origin:50% 0;transition:transform 1s cubic-bezier(.45,0,.3,1);transform-style:preserve-3d}
+.env-flap{position:absolute;left:0;right:0;top:0;height:57%;z-index:5;transform-origin:50% 0;transition:transform 1s cubic-bezier(.45,0,.3,1),opacity .65s ease;transform-style:preserve-3d}
 #env.opening .env-flap{transform:rotateX(180deg)}
 .flap-face{position:absolute;inset:0;clip-path:polygon(0 0,100% 0,50% 100%);backface-visibility:hidden;-webkit-backface-visibility:hidden}
 .flap-face.front{background:linear-gradient(180deg,#f9f0dc,#eeddc0)}
@@ -44,28 +50,41 @@ main{position:relative;z-index:2;flex:1;width:100%;min-height:0;display:flex;fle
 #sealBtn.lit .crackGlow{opacity:.5}
 #sealBtn.lit .crackLine{stroke-dashoffset:0}
 #sealBtn.fading{opacity:0;transform:translate(-50%,-50%) scale(1.15)}
+#sealBtn .sheen{position:absolute;inset:0;border-radius:50%;overflow:hidden;pointer-events:none}
+#sealBtn .sheen span{position:absolute;top:-20%;bottom:-20%;left:0;width:45%;transform:translateX(-160%) skewX(-18deg);
+  background:linear-gradient(90deg,rgba(255,246,200,0) 0%,rgba(255,246,200,.55) 50%,rgba(255,246,200,0) 100%);
+  animation:sealSheen 4s ease-in-out infinite}
+@keyframes sealSheen{0%{transform:translateX(-160%) skewX(-18deg);opacity:0}10%{opacity:1}30%{transform:translateX(260%) skewX(-18deg);opacity:0}100%{transform:translateX(260%) skewX(-18deg);opacity:0}}
 #tapPrompt{margin-top:3.6dvh;font-family:'Jost',sans-serif;font-size:10px;letter-spacing:.34em;text-transform:uppercase;color:#774628;animation:breathe 2.4s ease-in-out infinite}
 @keyframes breathe{0%,100%{opacity:.45}50%{opacity:.95}}
 
 /* ---------- ACT 2 : the reading card ---------- */
-#reader{position:relative;width:100%;max-width:340px;flex:1;min-height:0;display:flex;flex-direction:column;opacity:0;transform:translateY(12px);transition:opacity .8s ease,transform .8s ease;pointer-events:none}
+#reader{position:absolute;inset:0;padding:10dvh 8vw 7.5dvh;display:flex;flex-direction:column;opacity:0;transform:translateY(12px);transition:opacity .8s ease,transform .8s ease;pointer-events:none}
 #reader.show{opacity:1;transform:none;pointer-events:auto}
-#scroller{flex:1;min-height:0;overflow-y:auto;touch-action:pan-y;overscroll-behavior:contain;padding:4px 2px 10px;scrollbar-width:none}
+#scroller{flex:1;min-height:0;width:100%;max-width:340px;margin:0 auto;overflow-y:auto;touch-action:pan-y;overscroll-behavior:contain;padding:4px 2px 10px;scrollbar-width:none}
 #scroller::-webkit-scrollbar{display:none}
-#card{background:linear-gradient(180deg,#fffdf7,#fdf6ea);border:1px solid rgba(178,132,62,.45);border-radius:6px;box-shadow:0 14px 30px rgba(122,74,32,.14);padding:28px 24px 30px;text-align:left}
-.para{font-size:16.5px;line-height:1.85;color:#5a2d28;white-space:pre-line;opacity:0;transform:translateY(12px);transition:opacity .6s ease,transform .6s ease}
+#card{position:relative;background:linear-gradient(180deg,#fffdf7,#fdf6ea);border:1px solid rgba(178,132,62,.45);border-radius:14px;box-shadow:0 14px 30px rgba(122,74,32,.14);padding:28px 24px 30px;text-align:left}
+#card::after{content:"";position:absolute;inset:7px;border:1px solid rgba(198,162,92,.25);border-radius:9px;pointer-events:none}
+#card::before{content:"";position:absolute;left:0;right:0;top:50%;height:120px;transform:translateY(-50%);pointer-events:none;
+  background:linear-gradient(180deg,rgba(146,104,44,0) 0%,rgba(146,104,44,.05) 34%,rgba(255,255,255,.5) 50%,rgba(146,104,44,.05) 66%,rgba(146,104,44,0) 100%)}
+#flourish{display:flex;align-items:center;justify-content:center;gap:9px;margin-bottom:20px;position:relative;z-index:1}
+#flourish .fl-line{display:block;width:38px;height:1px;background:linear-gradient(90deg,rgba(198,162,92,0),rgba(198,162,92,.75))}
+#flourish .fl-line:last-child{background:linear-gradient(90deg,rgba(198,162,92,.75),rgba(198,162,92,0))}
+#flourish .fl-diamond{display:block;width:6px;height:6px;transform:rotate(45deg);background:linear-gradient(135deg,#e8c877,#b2843e)}
+.para{position:relative;z-index:1;font-size:16.5px;line-height:1.85;color:#5a2d28;white-space:pre-line;opacity:0;transform:translateY(12px);transition:opacity .6s ease,transform .6s ease}
 .para+.para{margin-top:1.15em}
 .para.show{opacity:1;transform:none}
 
 /* ---------- ACT 3 : the signature ---------- */
-#sigBlock{margin-top:1.6em;text-align:center;opacity:0;transform:translateY(10px);transition:opacity 1s ease,transform 1s ease}
+#sigBlock{position:relative;z-index:1;margin-top:1.6em;text-align:center;opacity:0;transform:translateY(10px);transition:opacity 1s ease,transform 1s ease}
 #sigBlock.show{opacity:1;transform:none}
+#sigBlock.show #sigText{animation:shimmer 2.8s linear 1}
 #sigText{font-family:'Great Vibes',cursive;font-size:clamp(29px,8.4vw,37px);line-height:1.3;
   background:linear-gradient(100deg,#a8742c 0%,#d9a84e 30%,#f6e2a0 50%,#d9a84e 70%,#a8742c 100%);background-size:200% 100%;
-  -webkit-background-clip:text;background-clip:text;color:transparent;animation:shimmer 3.4s linear infinite}
+  -webkit-background-clip:text;background-clip:text;color:transparent}
 @keyframes shimmer{to{background-position:-200% 0}}
 #sigHeart{margin-top:6px}
-#controls{padding-top:13px;text-align:center}
+#controls{padding-top:13px;text-align:center;width:100%;max-width:340px;margin:0 auto}
 #continueHint{font-family:'Jost',sans-serif;font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:#774628;animation:breathe 2.4s ease-in-out infinite;transition:opacity .5s ease}
 #readAllBtn{display:inline-block;margin-top:9px;background:none;border:none;cursor:pointer;font-family:'Jost',sans-serif;font-size:11px;letter-spacing:.14em;color:#a06a52;text-decoration:underline;text-underline-offset:3px;opacity:.8;padding:6px 10px;transition:opacity .5s ease}
 #continueHint.off{animation:none;opacity:0;pointer-events:none}
@@ -76,6 +95,7 @@ main{position:relative;z-index:2;flex:1;width:100%;min-height:0;display:flex;fle
 /* ---------- small / short screens ---------- */
 @media (max-height:680px){
   main{padding-top:8.5dvh}
+  #reader{padding-top:8.5dvh}
   #env{width:min(72vw,272px);margin-top:3.4dvh}
   #whisper{font-size:15px}
   #card{padding:22px 19px 24px}
@@ -84,11 +104,13 @@ main{position:relative;z-index:2;flex:1;width:100%;min-height:0;display:flex;fle
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation-duration:.01s !important;animation-iteration-count:1 !important;transition-duration:.01s !important}
   #sigText{animation:none}
+  #sealBtn .sheen{display:none}
 }
 </style>
 </head>
 <body>
 <div id="page13">
+  <canvas id="motes" aria-hidden="true"></canvas>
   <div class="chaphead">· Chapter Thirteen ·</div>
   <main>
     <!-- ACT 1 -->
@@ -122,6 +144,7 @@ main{position:relative;z-index:2;flex:1;width:100%;min-height:0;display:flex;fle
             <path class="crackGlow" d="M18 17 L31 27 L26 38 L39 51" fill="none" stroke="#ffe9a8" stroke-width="5.5" stroke-linecap="round"/>
             <path class="crackLine" pathLength="100" d="M18 17 L31 27 L26 38 L39 51" fill="none" stroke="#fff3c4" stroke-width="1.8" stroke-linecap="round"/>
           </svg>
+          <span class="sheen" aria-hidden="true"><span></span></span>
         </button>
       </div>
       <div id="tapPrompt">Tap the seal</div>
@@ -131,6 +154,7 @@ main{position:relative;z-index:2;flex:1;width:100%;min-height:0;display:flex;fle
     <section id="reader" aria-label="The letter">
       <div id="scroller">
         <div id="card">
+          <div id="flourish" aria-hidden="true"><span class="fl-line"></span><span class="fl-diamond"></span><span class="fl-line"></span></div>
           <div id="paras"></div>
           <div id="sigBlock">
             <div id="sigText"></div>
@@ -188,9 +212,19 @@ const paraEls = LETTER_PARAS.map(t=>{
 
 let state='sealed', shown=0, advanceLock=false, finished=false;
 
-/* ---------- sound (created only from the seal-tap gesture) ---------- */
-let actx=null;
-function ensureAudio(){ if(!actx){ try{ actx=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ actx=null; } } if(actx&&actx.state==='suspended') actx.resume(); }
+/* ---------- sound (created only from the seal-tap gesture) ----------
+   ALL letter audio routes through ONE master gain (letterGain) —
+   the single point a future mute hook needs:
+   window.__letterAudio.setMuted(true/false). */
+let actx=null, letterGain=null;
+function ensureAudio(){
+  if(!actx){
+    try{ actx=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ actx=null; }
+    if(actx){ letterGain=actx.createGain(); letterGain.gain.value=1; letterGain.connect(actx.destination); }
+  }
+  if(actx&&actx.state==='suspended') actx.resume();
+}
+window.__letterAudio={ setMuted(m){ if(letterGain&&actx) letterGain.gain.setTargetAtTime(m?0:1, actx.currentTime, .1); } };
 function paperSlide(){
   if(!actx) return;
   const t=actx.currentTime, dur=RM?0.15:0.75;
@@ -201,7 +235,7 @@ function paperSlide(){
   bp.frequency.setValueAtTime(420,t); bp.frequency.exponentialRampToValueAtTime(1900,t+dur*0.85);
   const g=actx.createGain(); g.gain.setValueAtTime(0.0001,t);
   g.gain.exponentialRampToValueAtTime(0.11,t+0.09); g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
-  src.connect(bp); bp.connect(g); g.connect(actx.destination); src.start(t); src.stop(t+dur+0.05);
+  src.connect(bp); bp.connect(g); g.connect(letterGain); src.start(t); src.stop(t+dur+0.05);
 }
 function musicNote(freq,when,vol,dur){
   if(!actx) return;
@@ -211,50 +245,259 @@ function musicNote(freq,when,vol,dur){
     o.type='sine'; o.frequency.value=f;
     g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(v,t+0.015);
     g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
-    o.connect(g); g.connect(actx.destination); o.start(t); o.stop(t+dur+0.1);
+    o.connect(g); g.connect(letterGain); o.start(t); o.stop(t+dur+0.1);
   });
 }
-const chime = ()=> musicNote(1046.5, 0, 0.09, 1.4);       /* C6, the book's music-box voice */
-const sigNote = ()=> musicNote(1318.5, 0, 0.045, 1.6);    /* E6, one soft note as the signature lands */
+/* Unsealing: a warm C-major music-box chord, notes staggered ~40 ms
+   (replaces demo1's single C6 ding). */
+function unsealChord(){
+  [[523.25,0,.070],[659.25,.04,.060],[783.99,.08,.058],[1046.50,.12,.048]]
+    .forEach(([f,w,v])=> musicNote(f,w,v,1.9));
+}
+/* The signature lands on a soft resolving chord — low, slow, final
+   (replaces demo1's single E6 note). */
+function sigChord(){
+  [[392.00,0,.040],[523.25,.06,.048],[659.25,.12,.044],[783.99,.18,.034]]
+    .forEach(([f,w,v])=> musicNote(f,w,v,2.6));
+}
+
+/* ================================================================
+   LETTER_MUSIC — the reading underscore (SEPARABLE MODULE)
+   A very quiet, slow music-box + pad loop that starts on unsealing
+   and stays under the reading. Master level ≈ 30% of Chapter 14's
+   master (.55 × .30 ≈ .165). Scheduler pattern reused from ch14:
+   200 ms tick, .6 s lookahead, overdue steps are silently SKIPPED
+   (never burst-played), and a visibility guard suspends the
+   context when the page hides and resyncs when it returns.
+   Warmth chain: melody → low-pass 2.45 kHz → dry + generated-
+   impulse reverb + soft feedback delay; pads through their own
+   850 Hz low-pass. In the book phase this whole block lifts out.
+   ================================================================ */
+const LETTER_MUSIC = {
+  beat: .92,
+  master: .165,
+  melody: [ ['E5',2],['G5',2],['C6',4],[0,2],['A5',2],['G5',2],['E5',4],[0,2],
+            ['D5',2],['E5',2],['G5',4],[0,2],['E5',2],['D5',2],['C5',6],[0,4] ],
+  pads:   [ [0,'C'],[10,'F'],[20,'G'],[30,'Am'],[34,'C'] ]
+};
+const LM_NOTE = {C5:523.25,D5:587.33,E5:659.25,G5:783.99,A5:880.00,C6:1046.50};
+const LM_PAD_NOTES = {C3:130.81,D3:146.83,E3:164.81,F3:174.61,G3:196.00,A3:220.00,B3:246.94,
+                      C4:261.63,D4:293.66,E4:329.63,F4:349.23,G4:392.00,A4:440.00};
+const LM_PAD_CHORDS = {C:['C3','E3','G3'], F:['F3','A3','C4'], G:['G3','B3','D4'], Am:['A3','C4','E4']};
+let lmGain=null, lmMelodyBus=null, lmPadBus=null, lmTimer=null, lmNext=0, lmIdx=0, lmBeat=0, lmStarted=false;
+const LM_LOOP = LETTER_MUSIC.melody.reduce((a,s)=>a+s[1],0);
+function lmImpulse(dur,decay){
+  const rate=actx.sampleRate, len=Math.floor(rate*dur), buf=actx.createBuffer(2,len,rate);
+  for(let c=0;c<2;c++){ const d=buf.getChannelData(c);
+    for(let i=0;i<len;i++) d[i]=(Math.random()*2-1)*Math.pow(1-i/len,decay); }
+  return buf;
+}
+function lmBuildChain(){
+  lmGain=actx.createGain(); lmGain.gain.value=0; lmGain.connect(letterGain);
+  const filter=actx.createBiquadFilter(); filter.type='lowpass'; filter.frequency.value=2450; filter.Q.value=.4;
+  const dry=actx.createGain(); dry.gain.value=.85;
+  filter.connect(dry); dry.connect(lmGain);
+  const verb=actx.createConvolver(); verb.buffer=lmImpulse(2.2,2.8);
+  const send=actx.createGain(); send.gain.value=.5;
+  const wet=actx.createGain(); wet.gain.value=.5;
+  filter.connect(send); send.connect(verb); verb.connect(wet); wet.connect(lmGain);
+  const dly=actx.createDelay(1); dly.delayTime.value=.27;
+  const fb=actx.createGain(); fb.gain.value=.24;
+  const dSend=actx.createGain(); dSend.gain.value=.3;
+  const dWet=actx.createGain(); dWet.gain.value=.13;
+  filter.connect(dSend); dSend.connect(dly); dly.connect(fb); fb.connect(dly);
+  dly.connect(dWet); dWet.connect(lmGain);
+  lmMelodyBus=filter;
+  lmPadBus=actx.createGain();
+  const pf=actx.createBiquadFilter(); pf.type='lowpass'; pf.frequency.value=850; pf.Q.value=.3;
+  const pDry=actx.createGain(); pDry.gain.value=.8;
+  lmPadBus.connect(pf); pf.connect(pDry); pDry.connect(lmGain);
+  const pSend=actx.createGain(); pSend.gain.value=.45;
+  pf.connect(pSend); pSend.connect(verb);
+}
+function lmNote(f,t,dur){
+  const o1=actx.createOscillator(), o2=actx.createOscillator(), g=actx.createGain(), g2=actx.createGain();
+  o1.type='sine'; o1.frequency.value=f; o2.type='sine'; o2.frequency.value=f*2; g2.gain.value=.32;
+  const len=Math.max(dur,.9);
+  g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(.15,t+.008); g.gain.exponentialRampToValueAtTime(.0001,t+len);
+  o1.connect(g); o2.connect(g2); g2.connect(g); g.connect(lmMelodyBus);
+  o1.start(t); o2.start(t); o1.stop(t+len+.1); o2.stop(t+len+.1);
+  if(window.__lmDebug) window.__lmDebug.scheduled++;
+}
+function lmPadChord(names,t,dur){
+  names.forEach(n=>{
+    const f=LM_PAD_NOTES[n];
+    const o1=actx.createOscillator(), o2=actx.createOscillator(), og=actx.createGain(), g=actx.createGain();
+    o1.type='sine'; o1.frequency.value=f;
+    o2.type='triangle'; o2.frequency.value=f; o2.detune.value=5; og.gain.value=.35;
+    o1.connect(g); o2.connect(og); og.connect(g); g.connect(lmPadBus);
+    g.gain.setValueAtTime(0,t);
+    g.gain.linearRampToValueAtTime(.03,t+.45);
+    g.gain.setValueAtTime(.03,t+Math.max(.45,dur-.9));
+    g.gain.linearRampToValueAtTime(0,t+dur+.9);
+    o1.start(t); o2.start(t); o1.stop(t+dur+1); o2.stop(t+dur+1);
+  });
+}
+function lmPadsAt(beatInLoop,t){
+  for(let i=0;i<LETTER_MUSIC.pads.length;i++){
+    if(LETTER_MUSIC.pads[i][0]===beatInLoop){
+      const nextBeat=(i+1<LETTER_MUSIC.pads.length)?LETTER_MUSIC.pads[i+1][0]:LM_LOOP;
+      lmPadChord(LM_PAD_CHORDS[LETTER_MUSIC.pads[i][1]], t, (nextBeat-beatInLoop)*LETTER_MUSIC.beat);
+      return;
+    }
+  }
+}
+function startLetterMusic(){
+  if(lmStarted || !actx) return; lmStarted=true;
+  try{
+    if(!lmGain) lmBuildChain();
+    const t0=actx.currentTime;
+    lmGain.gain.cancelScheduledValues(t0);
+    lmGain.gain.setValueAtTime(0,t0);
+    lmGain.gain.linearRampToValueAtTime(LETTER_MUSIC.master, t0+2.5);
+    lmIdx=0; lmBeat=0; lmNext=t0+.3;
+    lmTimer=setInterval(()=>{
+      if(!actx) return;
+      const now=actx.currentTime;
+      if(lmNext < now - .3){
+        /* page was hidden / timer throttled: skip every overdue step */
+        while(lmNext < now + .1){
+          const sk=LETTER_MUSIC.melody[lmIdx % LETTER_MUSIC.melody.length]; lmIdx++;
+          lmNext += sk[1]*LETTER_MUSIC.beat; lmBeat += sk[1];
+        }
+      }
+      if(actx.state==='suspended' && !document.hidden){ try{ actx.resume(); }catch(e){} }
+      if(lmNext < now + .02) lmNext = now + .02;   /* never start a note in the past */
+      while(lmNext < now + .6){
+        const s=LETTER_MUSIC.melody[lmIdx % LETTER_MUSIC.melody.length]; lmIdx++;
+        const dur=s[1]*LETTER_MUSIC.beat;
+        lmPadsAt(lmBeat % LM_LOOP, lmNext);
+        if(s[0]) lmNote(LM_NOTE[s[0]], lmNext, dur);
+        lmNext += dur; lmBeat += s[1];
+      }
+    },200);
+  }catch(e){ /* no audio available — the page still works in silence */ }
+}
+/* Background guard (same pattern as ch14): hidden → suspend;
+   visible → resync the scheduler clock to now + a breath, so
+   overdue notes are skipped, never burst-played. */
+document.addEventListener('visibilitychange', ()=>{
+  if(!actx || !lmStarted) return;
+  try{
+    if(document.hidden){ actx.suspend(); }
+    else { lmNext = actx.currentTime + .15; actx.resume(); }
+  }catch(e){}
+});
+/* QA hook: inject scheduler debt and count what actually plays. */
+window.__lmDebug={ scheduled:0,
+  injectDebt(sec){ lmNext = actx.currentTime - sec; },
+  next(){ return lmNext; }, now(){ return actx?actx.currentTime:0; },
+  started(){ return lmStarted; } };
 
 /* ---------- ACT 1 : unsealing ---------- */
 window.addEventListener('load', ()=> setTimeout(()=> $('whisper').classList.add('show'), RM?50:550));
-sealBtn.addEventListener('click', ()=>{
+function unseal(){
   if(state!=='sealed') return;
   state='opening';
   ensureAudio();
+  $('whisper').classList.add('bye');                  /* the whisper leaves BEFORE the flap can reach it */
   sealBtn.classList.add('lit');                       /* the golden crack lights across the wax */
   setTimeout(()=>{
-    env.classList.add('opening');                     /* flap lifts, paper rises */
+    env.classList.add('opening');                     /* flap lifts; the paper slides UP out of the pocket */
     paperSlide();
-    setTimeout(()=>{ sealBtn.classList.add('fading'); tapPrompt.style.opacity='0'; }, RM?30:420);
-    setTimeout(chime, RM?60:650);
+    setTimeout(unsealChord, RM?40:300);               /* warm chord as the paper rises */
+    startLetterMusic();                               /* the quiet underscore fades in underneath */
+    setTimeout(()=>{ tapPrompt.style.opacity='0'; }, RM?30:420);
     setTimeout(()=>{
-      envScene.classList.add('gone');
-      setTimeout(()=>{ envScene.style.display='none'; openLetter(); }, RM?60:680);
-    }, RM?120:1250);
+      env.classList.add('retreat');                   /* envelope sinks & fades; the paper becomes the card */
+      sealBtn.classList.add('fading');
+      openLetter();
+      setTimeout(()=>{ envScene.style.display='none'; }, RM?80:800);
+    }, RM?150:1850);
   }, RM?60:520);
-});
+}
+/* The tap target is the WHOLE envelope, not only the seal — real
+   fingers miss small circles. (The seal button still works; the
+   state guard makes the double-fire harmless.) */
+sealBtn.addEventListener('click', unseal);
+env.addEventListener('click', unseal);
 
 /* ---------- ACT 2 : hybrid paragraph reveal ---------- */
 function openLetter(){
   state='reading';
   reader.classList.add('show');
+  motesCalm();                       /* the motes settle so the words own the page */
   setTimeout(()=> revealNext(), RM?30:350);
+}
+/* --- Smart auto-scroll -------------------------------------------
+   The FRONTIER is the bottom edge (in scroller content coords) of
+   the last revealed paragraph. The scroll only moves when
+   (a) she is at the frontier (within ~80px of it) AND
+   (b) the newly revealed paragraph reaches below the comfortable
+   fold. If she has scrolled UP to re-read, a tap still reveals the
+   next paragraph — but her scroll position is NEVER moved. */
+function frontierBottom(){
+  if(!shown) return 0;
+  const el=paraEls[shown-1], sr=scroller.getBoundingClientRect(), r=el.getBoundingClientRect();
+  return scroller.scrollTop + (r.bottom - sr.top);
+}
+function atFrontier(){
+  return scroller.scrollTop + scroller.clientHeight >= frontierBottom() - 80;
+}
+function scrollParaIntoComfort(el){
+  const sr=scroller.getBoundingClientRect(), r=el.getBoundingClientRect();
+  const target = scroller.scrollTop + (r.top - sr.top) - Math.max(12, sr.height*0.14);
+  const max = scroller.scrollHeight - scroller.clientHeight;
+  scroller.scrollTo({ top: Math.max(0, Math.min(target, max)), behavior: RM?'auto':'smooth' });
+}
+function paraBelowFold(el){
+  const sr=scroller.getBoundingClientRect(), r=el.getBoundingClientRect();
+  return r.bottom > sr.bottom - 24 || r.top > sr.bottom - 24;
+}
+/* Resolves once the scroller has fully stopped (two stable reads
+   after a short lead-in), ~2.7 s cap. */
+function whenScrollSettles(cb){
+  if(RM){ cb(); return; }
+  let last=scroller.scrollTop, stable=0, waited=0;
+  setTimeout(()=>{
+    const iv=setInterval(()=>{
+      waited+=90;
+      const cur=scroller.scrollTop;
+      if(Math.abs(cur-last)<.5){ stable++; } else { stable=0; }
+      last=cur;
+      if(stable>=2 || waited>2500){ clearInterval(iv); cb(); }
+    },90);
+  },220);
 }
 function revealNext(){
   if(shown>=paraEls.length) return;
+  const wasAtFrontier = atFrontier();            /* judged BEFORE the reveal */
   const el=paraEls[shown]; shown++;
   el.classList.add('show');
-  setTimeout(()=>{ try{ el.scrollIntoView({behavior:RM?'auto':'smooth', block:'center'}); }catch(e){} }, RM?10:160);
-  if(shown>=paraEls.length){ hint.classList.add('off'); readAllBtn.classList.add('off'); finishLetter(); }
+  const isLast = shown>=paraEls.length;
+  setTimeout(()=>{
+    if(wasAtFrontier && paraBelowFold(el)) scrollParaIntoComfort(el);
+    if(isLast){ hint.classList.add('off'); readAllBtn.classList.add('off'); finishLetter(wasAtFrontier); }
+  }, RM?10:80);
 }
-function finishLetter(){
+/* ---------- ACT 3 : the signature ----------
+   The ~0.8 s breath starts only AFTER the final paragraph's
+   auto-scroll has fully settled; then the signature fades in with
+   its ONE gold shimmer sweep, the resolving chord sounds, and the
+   page stays still. */
+let sigWantedFrontier=false;
+function finishLetter(wasAtFrontier){
   if(finished) return; finished=true;
-  setTimeout(()=>{ sigBlock.classList.add('show'); sigNote();          /* ~0.8s breath, then the signature */
-    setTimeout(()=>{ try{ sigBlock.scrollIntoView({behavior:RM?'auto':'smooth', block:'center'}); }catch(e){} }, RM?20:250);
-    setTimeout(()=> pagenum.classList.add('show'), RM?100:900);
-  }, RM?60:800);
+  sigWantedFrontier = !!wasAtFrontier;
+  whenScrollSettles(()=>{
+    setTimeout(()=>{
+      sigBlock.classList.add('show'); sigChord();
+      setTimeout(()=>{
+        if(sigWantedFrontier && paraBelowFold(sigBlock)) scrollParaIntoComfort(sigBlock);
+      }, RM?20:250);
+      setTimeout(()=> pagenum.classList.add('show'), RM?100:900);
+    }, RM?60:800);
+  });
 }
 /* Tap = next paragraph. Pointer-based, so a scroll drag (movement > 10px)
    is never mistaken for a tap.
@@ -276,14 +519,76 @@ document.addEventListener('pointerup', e=>{
   revealNext();
 });
 readAllBtn.addEventListener('click', ()=>{
-  if(state!=='reading') return;
-  hint.classList.add('off'); readAllBtn.classList.add('off');
+  if(state!=='reading' || finished) return;
+  readAllBtn.classList.add('off');               /* the button retires at once… */
+  const wasAtFrontier = atFrontier();
   const rest=paraEls.slice(shown);
-  rest.forEach((el,i)=> setTimeout(()=>{ el.classList.add('show'); shown++;
-    if(i===rest.length-1){ try{ el.scrollIntoView({behavior:RM?'auto':'smooth', block:'center'}); }catch(e){} finishLetter(); }
+  if(!rest.length){ hint.classList.add('off'); finishLetter(wasAtFrontier); return; }
+  rest.forEach((el,i)=> setTimeout(()=>{
+    el.classList.add('show'); shown++;
+    if(i===rest.length-1){
+      /* …but the hint stays until the LAST paragraph has landed */
+      hint.classList.add('off');
+      if(wasAtFrontier && paraBelowFold(el)) scrollParaIntoComfort(el);
+      finishLetter(wasAtFrontier);
+    }
   }, RM?0:i*120));
-  if(!rest.length) finishLetter();
 });
+
+/* ---------- ambient golden motes ----------
+   One canvas behind everything (pointer-events: none): pre-drawn
+   soft bokeh sprites, 14 particles, very low opacity, slow drift —
+   canvas redraws of translated sprites + opacity only (book law).
+   Alive around the closed envelope; once the letter opens they
+   CALM to near-invisible (opacity → ~15%, count thins) so reading
+   is undisturbed. rAF pauses itself on tab-hide; absent entirely
+   under reduced motion. */
+const motes=(function(){
+  const cv=document.getElementById('motes');
+  if(RM || !cv) return { calm(){} };
+  const ctx=cv.getContext('2d');
+  const DPR=Math.min(window.devicePixelRatio||1, 1.75);
+  let W=0, H=0, calmTarget=1, calmLevel=1;
+  const sprite=document.createElement('canvas'); sprite.width=sprite.height=64;
+  const sg=sprite.getContext('2d');
+  const grad=sg.createRadialGradient(32,32,0,32,32,32);
+  grad.addColorStop(0,'rgba(226,178,92,.85)'); grad.addColorStop(.35,'rgba(226,178,92,.32)'); grad.addColorStop(1,'rgba(226,178,92,0)');
+  sg.fillStyle=grad; sg.fillRect(0,0,64,64);
+  const N=14, ps=[];
+  function resize(){
+    const r=cv.parentElement.getBoundingClientRect();
+    W=Math.max(1,Math.round(r.width)); H=Math.max(1,Math.round(r.height));
+    cv.width=W*DPR; cv.height=H*DPR; cv.style.width=W+'px'; cv.style.height=H+'px';
+  }
+  resize(); window.addEventListener('resize', resize);
+  for(let i=0;i<N;i++) ps.push({
+    x:Math.random(), y:Math.random(), r:7+Math.random()*15,
+    a:.07+Math.random()*.16, vy:.004+Math.random()*.010, ph:Math.random()*6.283, sw:.2+Math.random()*.5
+  });
+  const t0=performance.now();
+  function frame(now){
+    requestAnimationFrame(frame);
+    if(document.hidden) return;
+    const t=(now-t0)/1000;
+    calmLevel += (calmTarget-calmLevel)*.012;
+    ctx.setTransform(DPR,0,0,DPR,0,0);
+    ctx.clearRect(0,0,W,H);
+    ps.forEach((p,i)=>{
+      const thin = i>=6 ? Math.max(0,(calmLevel-.15)/.85) : 1;   /* extra motes vanish as it calms */
+      if(thin<=0) return;
+      let y=(p.y - t*p.vy) % 1; if(y<0) y+=1;
+      const x=p.x + Math.sin(t*.25*p.sw + p.ph)*.012;
+      const tw=.75 + .25*Math.sin(t*.5 + p.ph);
+      ctx.globalAlpha = p.a * tw * calmLevel * thin;
+      const s=p.r*2;
+      ctx.drawImage(sprite, x*W - p.r, y*H - p.r, s, s);
+    });
+    ctx.globalAlpha=1;
+  }
+  requestAnimationFrame(frame);
+  return { calm(){ calmTarget=.15; } };
+})();
+function motesCalm(){ try{ motes.calm(); }catch(e){} }
 </script>
 </body>
 </html>
