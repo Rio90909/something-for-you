@@ -75,11 +75,6 @@
   #hint.fading{opacity:0}
   #chatRow{position:absolute;left:50%;transform:translateX(-50%);bottom:calc(12px + env(safe-area-inset-bottom));width:min(94vw,372px);z-index:9;display:none;gap:8px;background:#fff8fa;border:1px solid #f2d3de;border-radius:24px;padding:8px;box-shadow:0 8px 22px rgba(160,90,115,.16)}
   #chatRow.show{display:flex}
-  #voicePick{position:absolute;left:50%;transform:translateX(-50%);bottom:calc(92px + env(safe-area-inset-bottom));z-index:10;display:none;align-items:center;gap:6px;background:#fff8fa;border:1px solid #f2d3de;border-radius:999px;padding:5px 8px;box-shadow:0 6px 16px rgba(160,90,115,.14)}
-  #voicePick.show{display:flex}
-  #voicePick span{font-size:11px;color:#a06a7c;letter-spacing:.03em;padding:0 2px;white-space:nowrap}
-  #voicePick button{border:1px solid #eec9d8;background:#fff;color:#a34a63;font-size:12px;padding:6px 11px;border-radius:999px;cursor:pointer;white-space:nowrap}
-  #voicePick button.on{background:#e0508a;border-color:#e0508a;color:#fff}
   body:has(#chatRow.show) #hint{bottom:calc(138px + env(safe-area-inset-bottom))}
   #chatIn{flex:1;height:52px;border:2px solid #eec3d0;background:#ffffff;border-radius:999px;padding:0 18px;font-family:Georgia,serif;font-size:16px;color:#7c4356;outline:none;min-width:0}
   #chatIn:focus{border-color:#e2709a}
@@ -136,11 +131,12 @@
     <input id="chatIn" type="text" placeholder="Talk to Mimi…" autocomplete="off">
     <button id="sendBtn">SEND</button>
   </div>
-  <div id="voicePick"><span>Her voice:</span><button data-v="1">1 · Soft</button><button data-v="2">2 · Cute</button><button data-v="3" class="on">3 · Sweet</button></div>
   <div id="pgnum">· 6 ·</div>
 </div>
 
 <script src="mimi-brain.js"></script>
+<script src="mimi-words/mimi-2.js"></script>
+<script src="mimi-words/mimi-3.js"></script>
 <script>
 (function(){
 "use strict";
@@ -183,21 +179,6 @@ function pickVoice(){
 }
 if(synth){ pickVoice(); if(synth.addEventListener) synth.addEventListener("voiceschanged",pickVoice); }
 
-/* Her voice tunings — TEST PAGE ONLY picker. 1 Soft / 2 Cute / 3 Sweet.
-   Gentler than the old pitch 1.9, which sounded weird/chipmunk. */
-var VOICE_PRESETS=[null,{pitch:1.3,rate:1.0},{pitch:1.5,rate:1.0},{pitch:1.62,rate:0.95}];
-var voiceCfg=VOICE_PRESETS[3];   /* Sweet — the user's pick (2026-11-22), her default voice */
-function setVoice(n){
-  voiceCfg=VOICE_PRESETS[n]||VOICE_PRESETS[2];
-  var bs=document.querySelectorAll("#voicePick button");
-  for(var i=0;i<bs.length;i++) bs[i].classList.toggle("on",+bs[i].getAttribute("data-v")===n);
-  speak("Hello! I am Mimi, your little kitten. I love talking with you!");
-}
-(function(){
-  var bs=document.querySelectorAll("#voicePick button");
-  for(var i=0;i<bs.length;i++)(function(b){ b.addEventListener("click",function(){ setVoice(+b.getAttribute("data-v")); }); })(bs[i]);
-})();
-
 /* ---------------- photo kitten ----------------
    Her head sway lives in CSS on #sway, so the photo, mouth and hat all
    ride the same gentle tilt as one unit — no drift, no breathing.
@@ -218,7 +199,7 @@ function speak(text){
   if(!chosenVoice && !voicesTried) pickVoice();
   try{
     var u=new SpeechSynthesisUtterance(text);
-    u.pitch=voiceCfg.pitch; u.rate=voiceCfg.rate;   /* her voice — chosen on the test picker */
+    u.pitch=1.62; u.rate=0.95;   /* her voice — Sweet, locked in permanently (user's pick, 2026-11-22) */
     if(chosenVoice) u.voice=chosenVoice;
     u.onend=function(){ endSpeak(seq); };
     u.onerror=function(){ endSpeak(seq); };
@@ -384,7 +365,6 @@ function openBox(){
     kitten.classList.add("in");
     hearts.start();
     chatRow.classList.add("show");
-    var _vp=$("voicePick"); if(_vp) _vp.classList.add("show");
     setHint("She's yours now — say hello to her!");
   },260);
   setTimeout(function(){ speak(OPENING_LINE); },800);
