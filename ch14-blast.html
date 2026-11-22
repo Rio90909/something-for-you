@@ -15,28 +15,28 @@
   body{background:#e2a7b3;overflow:hidden;overscroll-behavior:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;font-family:'Jost',sans-serif}
   .phone{position:relative;width:100%;max-width:420px;height:100dvh;margin:0 auto;overflow:hidden;perspective:1700px;background:#f7ead9}
   /* — Chapter Fourteen: the book's cream page, exactly like pages 2-3 — */
-  #page14{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:5dvh 8vw 11dvh;background:radial-gradient(115% 68% at 50% -4%,rgba(255,196,210,.65),rgba(255,196,210,0) 60%),radial-gradient(95% 58% at 50% 110%,rgba(243,148,172,.42),rgba(243,148,172,0) 62%),radial-gradient(72% 46% at 50% 47%,rgba(255,170,190,.5),rgba(255,170,190,0) 70%),linear-gradient(180deg,#fdf3e7,#f9e6d3 55%,#f0d9c2)}
+  #page14{position:absolute;inset:0;isolation:isolate;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:5dvh 8vw 11dvh;background:radial-gradient(115% 68% at 50% -4%,rgba(255,196,210,.65),rgba(255,196,210,0) 60%),radial-gradient(95% 58% at 50% 110%,rgba(243,148,172,.42),rgba(243,148,172,0) 62%),radial-gradient(72% 46% at 50% 47%,rgba(255,170,190,.5),rgba(255,170,190,0) 70%),linear-gradient(180deg,#fdf3e7,#f9e6d3 55%,#f0d9c2)}
   #page14::before{content:"";position:absolute;inset:12px;border:2px solid rgba(178,132,62,.55);border-radius:8px;pointer-events:none;z-index:6}
   #page14::after{content:"";position:absolute;inset:17px;border:1px solid rgba(178,132,62,.3);border-radius:5px;pointer-events:none;z-index:6}
   #bgheart{position:absolute;left:50%;top:47%;width:350px;height:338px;transform:translate(-50%,-50%);opacity:.05;z-index:0;pointer-events:none}
   .hcanvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1}
   #risers{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1}
   #petalsOnce{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1}
-  .chaphead{position:absolute;top:4.5dvh;left:0;right:0;z-index:2;text-align:center;font-family:'Jost',sans-serif;font-size:11px;letter-spacing:.38em;text-transform:uppercase;color:#a06a52}
-  .content{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;max-width:320px}
-  .line{font-family:'Playfair Display',serif;font-style:italic;font-size:17.5px;line-height:1.75;color:#6e2f2a;opacity:0;transform:translateY(14px);transition:opacity .55s ease,transform .55s ease;margin-top:1dvh}
+  .chaphead{position:absolute;top:4.5dvh;left:0;right:0;z-index:4;text-align:center;font-family:'Jost',sans-serif;font-size:11px;letter-spacing:.38em;text-transform:uppercase;color:#a06a52}
+  .content{position:relative;z-index:4;display:flex;flex-direction:column;align-items:center;max-width:320px}
+  .line{position:relative;z-index:2;font-family:'Playfair Display',serif;font-style:italic;font-size:17.5px;line-height:1.75;color:#6e2f2a;opacity:0;transform:translateY(14px);transition:opacity .55s ease,transform .55s ease;margin-top:1dvh}
   .line.show{opacity:1;transform:none}
   #l0{margin-top:0}
-  .goldwrap{position:relative;margin-top:4.5dvh}
+  .goldwrap{position:relative;z-index:2;margin-top:4.5dvh}
   .goldglow{position:absolute;left:50%;top:50%;width:340px;height:160px;transform:translate(-50%,-50%);background:radial-gradient(ellipse at center,rgba(255,51,85,.45) 0%,rgba(255,51,85,.15) 45%,rgba(255,51,85,0) 70%);opacity:0;transition:opacity .8s ease;pointer-events:none}
   .goldglow.on{opacity:.5;animation:goldGlow 1.6s ease-in-out infinite}
   @keyframes goldGlow{0%{opacity:.42}9%{opacity:.68}19%{opacity:.48}29%{opacity:.6}41%{opacity:.48}100%{opacity:.42}}
   .gold{font-family:'Great Vibes',cursive;font-weight:400;font-size:46px;line-height:1.2;position:relative;z-index:1;opacity:0;transform:translateY(14px);transition:opacity .6s ease,transform .6s ease;background:linear-gradient(100deg,#e01030,#c4042c 34%,#ff8296 50%,#e01030 64%,#8f0220);-webkit-background-clip:text;background-clip:text;color:transparent;background-size:200% 100%;text-shadow:0 1px 2px rgba(143,2,32,.25)}
   .gold.show{opacity:1;transform:none;animation:shimmer 3s linear infinite}
   @keyframes shimmer{0%{background-position:0% 0}100%{background-position:200% 0}}
-  .after{font-family:'Playfair Display',serif;font-style:italic;font-size:15px;line-height:1.65;color:#6e2f2a;max-width:300px;margin-top:1.4dvh;opacity:0;transform:translateY(10px);transition:opacity .8s ease,transform .8s ease}
+  .after{position:relative;z-index:2;font-family:'Playfair Display',serif;font-style:italic;font-size:15px;line-height:1.65;color:#6e2f2a;max-width:300px;margin-top:1.4dvh;opacity:0;transform:translateY(10px);transition:opacity .8s ease,transform .8s ease}
   .after.show{opacity:1;transform:none}
-  .heartwrap{margin-top:1.6dvh;opacity:0;transform:translateY(14px);transition:opacity .55s ease,transform .55s ease;position:relative;width:168px;height:162px}
+  .heartwrap{margin-top:1.6dvh;opacity:0;transform:translateY(14px);transition:opacity .55s ease,transform .55s ease;position:relative;z-index:1;width:168px;height:162px}
   .heartwrap.show{opacity:1;transform:none}
   .heartpulse{position:absolute;inset:0;transform-origin:50% 55%;animation:heartbeat 1.6s ease-in-out infinite}
   .heartwrap.holding .heartpulse{animation-duration:.95s}
@@ -64,16 +64,16 @@
   .heartwrap.blasted .heartpulse{animation:none;transform:scale(1.3);opacity:0;transition:transform .16s ease-out,opacity .16s ease-out}
   .heartwrap.blasted .ring{display:none}
   .heartwrap.blasted .sat{opacity:0;transition:opacity .3s ease}
-  .thanks{pointer-events:none;font-family:'Great Vibes',cursive;font-size:30px;line-height:1.25;color:#a31621;margin-top:-148px;opacity:0;transform:translateY(12px);transition:opacity .9s ease,transform .9s ease}
+  .thanks{position:relative;z-index:2;pointer-events:none;font-family:'Great Vibes',cursive;font-size:30px;line-height:1.25;color:#a31621;margin-top:-148px;opacity:0;transform:translateY(12px);transition:opacity .9s ease,transform .9s ease}
   .thanks.show{opacity:1;transform:none}
-  .thanks2{pointer-events:none;font-family:'Playfair Display',serif;font-style:italic;font-size:15.5px;line-height:1.6;color:#6e2f2a;max-width:300px;margin-top:1dvh;opacity:0;transform:translateY(12px);transition:opacity .9s ease,transform .9s ease}
+  .thanks2{position:relative;z-index:2;pointer-events:none;font-family:'Playfair Display',serif;font-style:italic;font-size:15.5px;line-height:1.6;color:#6e2f2a;max-width:300px;margin-top:1dvh;opacity:0;transform:translateY(12px);transition:opacity .9s ease,transform .9s ease}
   .thanks2.show{opacity:1;transform:none}
-  .theend{margin-top:2.6dvh;font-family:'Jost',sans-serif;font-size:11px;letter-spacing:.42em;text-transform:uppercase;color:#a06a52;opacity:0;transition:opacity .8s ease}
+  .theend{position:relative;z-index:2;margin-top:2.6dvh;font-family:'Jost',sans-serif;font-size:11px;letter-spacing:.42em;text-transform:uppercase;color:#a06a52;opacity:0;transition:opacity .8s ease}
   .theend.show{opacity:1}
-  .from{margin-top:1.6dvh;font-family:'Jost',sans-serif;font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:#a06a52;opacity:0;transition:opacity .8s ease}
+  .from{position:relative;z-index:2;margin-top:1.6dvh;font-family:'Jost',sans-serif;font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:#a06a52;opacity:0;transition:opacity .8s ease}
   .from.show{opacity:1}
   .from b{color:#a34a63;font-weight:500}
-  .hint{position:absolute;bottom:9.5dvh;left:0;right:0;z-index:2;text-align:center;font-family:'Jost',sans-serif;font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:#a34a63;opacity:.85;transition:opacity .25s ease}
+  .hint{position:absolute;bottom:9.5dvh;left:0;right:0;z-index:4;text-align:center;font-family:'Jost',sans-serif;font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:#a34a63;opacity:.85;transition:opacity .25s ease}
   .hint.hide{opacity:0}
   .hint span{display:inline-block;animation:hintBreathe 2.2s ease-in-out infinite}
   @keyframes hintBreathe{0%,100%{opacity:.45}50%{opacity:.95}}
@@ -147,8 +147,9 @@
     thanksDelayMs: 1400,   // breath after the blast before the thank-you lines
     theEnd       : "The End",
     fromLine     : "From — <b>Someone who adores you</b> · 2026",
-    holdMs       : 1300,   // how long she holds the heart
-    breathMs     : 4800    // quiet time with The End fully on screen before the book closes itself (a tap closes it sooner)
+    holdMs       : 1300    // how long she holds the heart
+    // NO AUTO-CLOSE: after The End the page waits, open, for her tap
+    // (hintClose) — only her tap closes the book. There is no timer.
   };
 
   document.getElementById('chapHead').textContent = COPY.chapterLabel;
@@ -356,7 +357,11 @@
      high register, notes ringing into each other. It starts on her
      first tap, loops gently under the whole page, fades away as the
      book closes, and leaves ONE final soft chime as the cover
-     settles. In the admin phase this block is what gets edited. */
+     settles. The melody runs through a gentle low-pass filter, a
+     generated-impulse reverb and a soft feedback delay, with warm
+     pad chords underneath and a lower master level — dreamy and
+     emotional, never dry. In the admin phase this block is what
+     gets edited. */
   var ENDING_MUSIC = {
     beat: .58,   // seconds per beat — slow and tender
     melody: [ ['E5',1],['G5',1],['C6',2],['B5',1],['G5',1],
@@ -372,13 +377,95 @@
   var NOTE = {C4:261.63, D4:293.66, E4:329.63, F4:349.23, G4:392.00, A4:440.00, B4:493.88,
               C5:523.25, D5:587.33, E5:659.25, F5:698.46, G5:783.99, A5:880.00, B5:987.77, C6:1046.50,
               E6:1318.51, G6:1567.98, C7:2093.00, E7:2637.02};
-  var actx=null, endGain=null, endTimer=null, endNext=0, endIdx=0, endStarted=false;
+  var actx=null, endGain=null, melodyBus=null, padBus=null, endTimer=null, endNext=0, endIdx=0, endBeat=0, endStarted=false;
+  var LOOP_BEATS = ENDING_MUSIC.melody.reduce(function(a,s){ return a+s[1]; }, 0); // the loop is 53 beats
+
+  /* ── The warmth chain — every node is generated in code, no files:
+       melody → low-pass 2.45 kHz (the metallic edge comes off)
+              → dry ─────────────────────────────────→ master
+              → generated-impulse reverb (2.2 s tail) → master
+              → soft feedback delay (0.27 s) ─────────→ master
+       pads   → low-pass 850 Hz → dry + reverb send ──→ master
+       master → destination, peaking at .55 (was .9): the music now
+       sits IN the background, a warm bed under the page. */
+  function buildEndingChain(){
+    endGain=actx.createGain(); endGain.gain.value=0; endGain.connect(actx.destination);
+    var filter=actx.createBiquadFilter(); filter.type='lowpass'; filter.frequency.value=2450; filter.Q.value=.4;
+    var dry=actx.createGain(); dry.gain.value=.85;
+    filter.connect(dry); dry.connect(endGain);
+    /* the reverb impulse: stereo noise with an exponential decay,
+       synthesised here — no audio file is ever loaded */
+    var sr=actx.sampleRate, irLen=Math.floor(sr*2.2), ir=actx.createBuffer(2, irLen, sr);
+    for (var ch=0; ch<2; ch++){ var dd=ir.getChannelData(ch);
+      for (var i=0;i<irLen;i++){ var p=i/irLen; dd[i]=(Math.random()*2-1)*Math.pow(1-p,2.8)*.55; } }
+    var verb=actx.createConvolver(); verb.buffer=ir;
+    var wet=actx.createGain(); wet.gain.value=.5;
+    verb.connect(wet); wet.connect(endGain);
+    var verbSend=actx.createGain(); verbSend.gain.value=.5;
+    filter.connect(verbSend); verbSend.connect(verb);
+    /* a whisper of feedback delay, for air */
+    var dly=actx.createDelay(1); dly.delayTime.value=.27;
+    var fb=actx.createGain(); fb.gain.value=.24;
+    var dlySend=actx.createGain(); dlySend.gain.value=.3;
+    var dlyWet=actx.createGain(); dlyWet.gain.value=.13;
+    filter.connect(dlySend); dlySend.connect(dly); dly.connect(fb); fb.connect(dly);
+    dly.connect(dlyWet); dlyWet.connect(endGain);
+    /* pads run darker and softer still, and share the same reverb */
+    padBus=actx.createGain();
+    var padFilter=actx.createBiquadFilter(); padFilter.type='lowpass'; padFilter.frequency.value=850; padFilter.Q.value=.3;
+    var padDry=actx.createGain(); padDry.gain.value=.8;
+    padBus.connect(padFilter); padFilter.connect(padDry); padDry.connect(endGain);
+    var padVerb=actx.createGain(); padVerb.gain.value=.45;
+    padFilter.connect(padVerb); padVerb.connect(verb);
+    melodyBus=actx.createGain(); melodyBus.connect(filter);
+  }
+
+  /* Warm pad chords — one soft triad per phrase segment, following
+     the lullaby's C-major harmony (times = beats from the loop
+     start). Each chord attacks slowly (~0.45 s) and rings into the
+     next one. A bed, not a second melody: ~.03 peak per note. */
+  var PAD_NOTES = { A2:110.00, C3:130.81, E3:164.81, F3:174.61, G3:196.00, A3:220.00, B3:246.94, C4:261.63, D4:293.66 };
+  var PAD_CHORDS = {
+    'C' : ['C3','E3','G3'],
+    'F' : ['F3','A3','C4'],
+    'G' : ['G3','B3','D4'],
+    'Am': ['A2','E3','C4']
+  };
+  var ENDING_PADS = [
+    [0,'C'], [6,'F'], [10,'G'], [13,'C'], [19,'G'], [21,'C'],
+    [25,'G'], [31,'C'], [38,'C'], [43,'Am'], [48,'C']
+  ];
+  function padChord(names, t, dur){
+    for (var i=0;i<names.length;i++){
+      (function(f){
+        var o1=actx.createOscillator(), o2=actx.createOscillator(), og=actx.createGain(), g=actx.createGain();
+        o1.type='sine'; o1.frequency.value=f;
+        o2.type='triangle'; o2.frequency.value=f; o2.detune.value=5; og.gain.value=.35;
+        o1.connect(g); o2.connect(og); og.connect(g); g.connect(padBus);
+        g.gain.setValueAtTime(0, t);
+        g.gain.linearRampToValueAtTime(.03, t+.45);
+        g.gain.setValueAtTime(.03, t+Math.max(.45, dur-.9));
+        g.gain.linearRampToValueAtTime(0, t+dur+.9);
+        o1.start(t); o2.start(t); o1.stop(t+dur+1); o2.stop(t+dur+1);
+      })(PAD_NOTES[names[i]]);
+    }
+  }
+  function padsAt(beatInLoop, t){
+    for (var i=0;i<ENDING_PADS.length;i++){
+      if (ENDING_PADS[i][0] === beatInLoop){
+        var nextBeat = (i+1 < ENDING_PADS.length) ? ENDING_PADS[i+1][0] : LOOP_BEATS;
+        padChord(PAD_CHORDS[ENDING_PADS[i][1]], t, (nextBeat - beatInLoop) * ENDING_MUSIC.beat);
+        return;
+      }
+    }
+  }
+
   function endNote(f, t, dur, dest, vol){
     var o1=actx.createOscillator(), o2=actx.createOscillator(), g=actx.createGain(), g2=actx.createGain();
     o1.type='sine'; o1.frequency.value=f; o2.type='sine'; o2.frequency.value=f*2; g2.gain.value=.32;
     var len=Math.max(dur, .9), peak=vol||.15;
     g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(peak, t+.008); g.gain.exponentialRampToValueAtTime(.0001, t+len);
-    o1.connect(g); o2.connect(g2); g2.connect(g); g.connect(dest || endGain || actx.destination);
+    o1.connect(g); o2.connect(g2); g2.connect(g); g.connect(dest || melodyBus || endGain || actx.destination);
     o1.start(t); o2.start(t); o1.stop(t+len+.1); o2.stop(t+len+.1);
   }
   function startEndingMusic(){
@@ -386,24 +473,26 @@
     try{
       actx = actx || new (window.AudioContext || window.webkitAudioContext)();
       if (actx.state === 'suspended') actx.resume();
-      if (!endGain){ endGain=actx.createGain(); endGain.gain.value=0; endGain.connect(actx.destination); }
+      if (!endGain){ buildEndingChain(); }
       var t0=actx.currentTime;
       endGain.gain.cancelScheduledValues(t0);
       endGain.gain.setValueAtTime(0, t0);
-      endGain.gain.linearRampToValueAtTime(.9, t0+1.5);
-      endIdx=0; endNext=t0+.12;
+      endGain.gain.linearRampToValueAtTime(.55, t0+1.5);
+      endIdx=0; endBeat=0; endNext=t0+.12;
       endTimer=setInterval(function(){
         if (!actx) return;
         var now=actx.currentTime;
         while (endNext < now + .6){
           var s=ENDING_MUSIC.melody[endIdx % ENDING_MUSIC.melody.length]; endIdx++;
           var dur=s[1]*ENDING_MUSIC.beat;
+          padsAt(endBeat % LOOP_BEATS, endNext);
           if (s[0]) endNote(NOTE[s[0]], endNext, dur);
-          endNext += dur;
+          endNext += dur; endBeat += s[1];
         }
       }, 200);
     }catch(e){ /* no audio available — the page still works in silence */ }
   }
+
   function closeEndingMusic(){
     if (!actx || !endGain) return;
     try{
@@ -413,7 +502,7 @@
       endGain.gain.linearRampToValueAtTime(0, now+1.3);
       if (endTimer){ var tm=endTimer; endTimer=null; setTimeout(function(){ clearInterval(tm); }, 1500); }
       /* one final soft chime as the cover settles */
-      endNote(NOTE[ENDING_MUSIC.chime], now+1.62, 2.4, actx.destination, .12);
+      endNote(NOTE[ENDING_MUSIC.chime], now+1.62, 2.4, actx.destination, .10);
     }catch(e){}
   }
 
@@ -510,11 +599,9 @@
   window.addEventListener('pointercancel', endHold);
   heartwrap.addEventListener('pointerleave', endHold);
 
-  var closeTimer=null;
   function doClose(){
     if (phase==='closed') return;
     phase='closed';
-    if (closeTimer){ clearTimeout(closeTimer); closeTimer=null; }
     setHint('');
     risers.stop();
     closeEndingMusic();
@@ -539,7 +626,6 @@
       phase='end';
       setHint(COPY.hintClose);
     }, COPY.thanksDelayMs + 1100);
-    closeTimer=setTimeout(doClose, COPY.thanksDelayMs + 1100 + COPY.breathMs);
   }
 </script>
 </body>
