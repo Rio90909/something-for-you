@@ -239,6 +239,102 @@
   #page6 .m6send{border:0;border-radius:999px;background:#e0508a;color:#fff;font-family:'Jost',sans-serif;font-size:11.5px;letter-spacing:.14em;padding:0 22px;height:52px;cursor:pointer}
   #page6 .pagenum{left:auto;right:18px;transform:none;bottom:calc(150px + env(safe-area-inset-bottom));color:#b98a99}
   #nextBtn6{right:14px}
+  /* — Chapter Thirteen: The Letter (transplanted from the approved
+       ch13-letter demo2; everything scoped under #page13) — */
+  #page13{position:absolute;inset:0;z-index:1;display:none;overflow:hidden;touch-action:none;transform-origin:0% 50%;backface-visibility:hidden;isolation:isolate;flex-direction:column;align-items:center;text-align:center;background:radial-gradient(120% 60% at 50% 0%, #fffdf6 0%, rgba(255,253,246,0) 55%),linear-gradient(180deg,#fdf6ea 0%,#f9ecdc 55%,#f4e3d0 100%)}
+  #page13:not(.live) *{animation-play-state:paused !important}
+  #page13 .shade{position:absolute;inset:0;pointer-events:none;opacity:0;z-index:40;background:linear-gradient(90deg, rgba(70,20,35,.5) 0%, transparent 30%)}
+  #page13.turning{transition:transform .95s cubic-bezier(.38,.12,.3,1);transform:rotateY(-102deg);pointer-events:none;z-index:3}
+  #page13.turning .shade{transition:opacity .95s ease;opacity:1}
+  #page13.turnback-start{transform:rotateY(-102deg);z-index:3}
+  #page13.turnback-start .shade{opacity:1}
+  #page13.turning-back{transition:transform .95s cubic-bezier(.38,.12,.3,1);transform:rotateY(0deg)}
+  #page13.turning-back .shade{transition:opacity .95s ease;opacity:0}
+  #page13::before{content:"";position:absolute;inset:12px;border:2px solid rgba(178,132,62,.55);border-radius:8px;pointer-events:none;z-index:6}
+  #page13::after{content:"";position:absolute;inset:17px;border:1px solid rgba(178,132,62,.3);border-radius:5px;pointer-events:none;z-index:6}
+  #page13 #l13motes{position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none}
+  #page13 .l13chaphead{position:absolute;top:4.5dvh;left:0;right:0;z-index:4;font-family:'Jost',sans-serif;font-size:11px;letter-spacing:.38em;text-transform:uppercase;color:#774628}
+  #page13 .l13main{position:relative;z-index:2;flex:1;width:100%;min-height:0;display:flex;flex-direction:column;align-items:center;padding:10dvh 8vw 7.5dvh}
+  /* — ACT 1 : the sealed envelope — */
+  #page13 #l13envScene{display:flex;flex-direction:column;align-items:center;margin:auto 0;transition:opacity .7s ease,transform .7s ease}
+  #page13 #l13envScene.gone{opacity:0;transform:scale(.96);pointer-events:none}
+  #page13 #l13whisper{font-family:'Playfair Display',serif;font-style:italic;font-size:16.5px;line-height:1.6;color:#6e2f2a;max-width:270px;opacity:0;transform:translateY(8px);transition:opacity 1.2s ease,transform 1.2s ease}
+  #page13 #l13whisper.show{opacity:1;transform:none}
+  #page13 #l13whisper.bye{opacity:0 !important;transform:translateY(-6px);transition:opacity .3s ease,transform .3s ease}
+  #page13 #l13env{position:relative;width:min(80vw,310px);aspect-ratio:3/2;margin-top:4.5dvh;perspective:1000px;cursor:pointer}
+  #page13 .l13envback{position:absolute;inset:0;border-radius:10px;background:linear-gradient(160deg,#fdfaf2,#f1e3cb);border:1px solid rgba(178,132,62,.35);box-shadow:0 18px 34px rgba(122,74,32,.18)}
+  #page13 .l13envpaper{position:absolute;left:5%;right:5%;top:6%;bottom:12%;border-radius:4px;border:1px solid rgba(178,132,62,.3);background:repeating-linear-gradient(180deg,#fffef9 0,#fffef9 15px,#f3ead6 15px,#f3ead6 16px),#fffef9;transition:transform 1.15s cubic-bezier(.3,.7,.25,1) .25s,opacity .55s ease}
+  #page13 #l13env.opening .l13envpaper{transform:translateY(-58%)}
+  #page13 #l13env .l13envback,#page13 #l13env .l13envinner,#page13 #l13env .l13envfront,#page13 #l13env .l13envlines{transition:opacity .65s ease,transform .65s ease}
+  #page13 #l13env.retreat .l13envback,#page13 #l13env.retreat .l13envinner,#page13 #l13env.retreat .l13envfront,#page13 #l13env.retreat .l13envlines{opacity:0;transform:translateY(24px)}
+  #page13 #l13env.retreat .l13envflap{opacity:0}
+  #page13 #l13env.retreat .l13envpaper{transform:translateY(-58%) scale(1.04);opacity:0;transition:transform .6s ease,opacity .55s ease .12s}
+  #page13 .l13envinner{position:absolute;inset:0;border-radius:10px;background:linear-gradient(160deg,#fdfaf2,#f1e3cb);z-index:2}
+  #page13 .l13envfront{position:absolute;inset:0;border-radius:0 0 10px 10px;clip-path:polygon(0 34%,50% 70%,100% 34%,100% 100%,0 100%);background:linear-gradient(205deg,#fbf5e8,#efe0c4);z-index:3}
+  #page13 .l13envlines{position:absolute;inset:0;width:100%;height:100%;z-index:4;pointer-events:none}
+  #page13 .l13envflap{position:absolute;left:0;right:0;top:0;height:57%;z-index:5;transform-origin:50% 0;transition:transform 1s cubic-bezier(.45,0,.3,1),opacity .65s ease;transform-style:preserve-3d}
+  #page13 #l13env.opening .l13envflap{transform:rotateX(180deg)}
+  #page13 .l13face{position:absolute;inset:0;clip-path:polygon(0 0,100% 0,50% 100%);backface-visibility:hidden;-webkit-backface-visibility:hidden}
+  #page13 .l13face.l13fface{background:linear-gradient(180deg,#f9f0dc,#eeddc0)}
+  #page13 .l13face.l13bface{transform:rotateX(180deg);background:linear-gradient(0deg,#f6ecd6,#efe0c4)}
+  #page13 #l13seal{position:absolute;left:50%;top:55%;transform:translate(-50%,-50%);width:68px;height:68px;z-index:7;background:none;border:none;padding:0;cursor:pointer;transition:opacity .4s ease,transform .4s ease}
+  #page13 #l13seal:focus-visible{outline:2px solid #b2843e;outline-offset:3px;border-radius:50%}
+  #page13 #l13seal .l13crackGlow{opacity:0;transition:opacity .3s ease}
+  #page13 #l13seal .l13crackLine{stroke-dasharray:100;stroke-dashoffset:100;transition:stroke-dashoffset .45s ease .05s}
+  #page13 #l13seal.lit .l13crackGlow{opacity:.5}
+  #page13 #l13seal.lit .l13crackLine{stroke-dashoffset:0}
+  #page13 #l13seal.fading{opacity:0;transform:translate(-50%,-50%) scale(1.15)}
+  #page13 #l13seal .l13sheen{position:absolute;inset:0;border-radius:50%;overflow:hidden;pointer-events:none}
+  #page13 #l13seal .l13sheen span{position:absolute;top:-20%;bottom:-20%;left:0;width:45%;transform:translateX(-160%) skewX(-18deg);background:linear-gradient(90deg,rgba(255,246,200,0) 0%,rgba(255,246,200,.55) 50%,rgba(255,246,200,0) 100%);animation:l13sealSheen 4s ease-in-out infinite}
+  @keyframes l13sealSheen{0%{transform:translateX(-160%) skewX(-18deg);opacity:0}10%{opacity:1}30%{transform:translateX(260%) skewX(-18deg);opacity:0}100%{transform:translateX(260%) skewX(-18deg);opacity:0}}
+  #page13 #l13tapPrompt{margin-top:3.6dvh;font-family:'Jost',sans-serif;font-size:10px;letter-spacing:.34em;text-transform:uppercase;color:#774628;animation:l13breathe 2.4s ease-in-out infinite;transition:opacity .3s ease}
+  @keyframes l13breathe{0%,100%{opacity:.45}50%{opacity:.95}}
+  /* — ACT 2 : the reading card — */
+  #page13 #l13reader{position:absolute;inset:0;padding:10dvh 8vw 7.5dvh;display:flex;flex-direction:column;opacity:0;transform:translateY(12px);transition:opacity .8s ease,transform .8s ease;pointer-events:none}
+  #page13 #l13reader.show{opacity:1;transform:none;pointer-events:auto}
+  #page13 #l13scroller{flex:1;min-height:0;width:100%;max-width:340px;margin:0 auto;overflow-y:auto;touch-action:pan-y;overscroll-behavior:contain;padding:4px 2px 10px;scrollbar-width:none}
+  #page13 #l13scroller::-webkit-scrollbar{display:none}
+  #page13 #l13card{position:relative;background:linear-gradient(180deg,#fffdf7,#fdf6ea);border:1px solid rgba(178,132,62,.45);border-radius:14px;box-shadow:0 14px 30px rgba(122,74,32,.14);padding:28px 24px 30px;text-align:left}
+  #page13 #l13card::after{content:"";position:absolute;inset:7px;border:1px solid rgba(198,162,92,.25);border-radius:9px;pointer-events:none}
+  #page13 #l13card::before{content:"";position:absolute;left:0;right:0;top:50%;height:120px;transform:translateY(-50%);pointer-events:none;background:linear-gradient(180deg,rgba(146,104,44,0) 0%,rgba(146,104,44,.05) 34%,rgba(255,255,255,.5) 50%,rgba(146,104,44,.05) 66%,rgba(146,104,44,0) 100%)}
+  #page13 #l13flourish{display:flex;align-items:center;justify-content:center;gap:9px;margin-bottom:20px;position:relative;z-index:1}
+  #page13 #l13flourish .l13flline{display:block;width:38px;height:1px;background:linear-gradient(90deg,rgba(198,162,92,0),rgba(198,162,92,.75))}
+  #page13 #l13flourish .l13flline.r{background:linear-gradient(90deg,rgba(198,162,92,.75),rgba(198,162,92,0))}
+  #page13 #l13flourish .l13fldia{display:block;width:6px;height:6px;transform:rotate(45deg);background:linear-gradient(135deg,#e8c877,#b2843e)}
+  #page13 .l13para{position:relative;z-index:1;font-family:'Playfair Display',serif;font-size:16.5px;line-height:1.85;color:#5a2d28;white-space:pre-line;opacity:0;transform:translateY(12px);transition:opacity .6s ease,transform .6s ease}
+  #page13 .l13para+.l13para{margin-top:1.15em}
+  #page13 .l13para.show{opacity:1;transform:none}
+  /* — ACT 3 : the signature — */
+  #page13 #l13sigBlock{position:relative;z-index:1;margin-top:1.6em;text-align:center;opacity:0;transform:translateY(10px);transition:opacity 1s ease,transform 1s ease}
+  #page13 #l13sigBlock.show{opacity:1;transform:none}
+  #page13 #l13sigBlock.show #l13sigText{animation:l13shimmer 2.8s linear 1}
+  #page13 #l13sigText{font-family:'Great Vibes',cursive;font-size:clamp(29px,8.4vw,37px);line-height:1.3;background:linear-gradient(100deg,#a8742c 0%,#d9a84e 30%,#f6e2a0 50%,#d9a84e 70%,#a8742c 100%);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent}
+  @keyframes l13shimmer{to{background-position:-200% 0}}
+  #page13 #l13sigHeart{margin-top:6px}
+  #page13 #l13controls{padding-top:13px;text-align:center;width:100%;max-width:340px;margin:0 auto}
+  #page13 #l13hint{font-family:'Jost',sans-serif;font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:#774628;animation:l13breathe 2.4s ease-in-out infinite;transition:opacity .5s ease}
+  #page13 #l13readAll{display:inline-block;margin-top:9px;background:none;border:none;cursor:pointer;font-family:'Jost',sans-serif;font-size:11px;letter-spacing:.14em;color:#a06a52;text-decoration:underline;text-underline-offset:3px;opacity:.8;padding:6px 10px;transition:opacity .5s ease}
+  #page13 #l13hint.off{animation:none;opacity:0;pointer-events:none}
+  #page13 #l13readAll.off{opacity:0;pointer-events:none}
+  #page13 .pagenum{color:#774628;opacity:0;transition:opacity 1.2s ease}
+  #page13 .pagenum.show{opacity:1}
+  #backBtn13{left:14px}
+  #nextBtn13{right:14px}
+  /* — Short screens: the demo's media tier, scoped — */
+  @media (max-height:680px){
+    #page13 .l13main{padding-top:8.5dvh}
+    #page13 #l13reader{padding-top:8.5dvh}
+    #page13 #l13env{width:min(72vw,272px);margin-top:3.4dvh}
+    #page13 #l13whisper{font-size:15px}
+    #page13 #l13card{padding:22px 19px 24px}
+    #page13 .l13para{font-size:15.5px;line-height:1.8}
+  }
+  @media (prefers-reduced-motion: reduce){
+    #page13 *,#page13 *::before,#page13 *::after{animation-duration:.01s !important;animation-iteration-count:1 !important;transition-duration:.01s !important}
+    #page13 #l13sigText{animation:none}
+    #page13 #l13seal .l13sheen{display:none}
+  }
+
   /* — Chapter Fourteen: Made Only For You (the ending, transplanted from
        the approved ch14-blast demo; everything scoped under #page14) — */
   #page14{position:absolute;inset:0;z-index:1;display:none;overflow:hidden;touch-action:none;transform-origin:0% 50%;backface-visibility:hidden;isolation:isolate;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:5dvh 8vw 11dvh;background:radial-gradient(115% 68% at 50% -4%,rgba(255,196,210,.65),rgba(255,196,210,0) 60%),radial-gradient(95% 58% at 50% 110%,rgba(243,148,172,.42),rgba(243,148,172,0) 62%),radial-gradient(72% 46% at 50% 47%,rgba(255,170,190,.5),rgba(255,170,190,0) 70%),linear-gradient(180deg,#fdf3e7,#f9e6d3 55%,#f0d9c2)}
@@ -490,6 +586,77 @@
     <button class="corner" id="backBtn6" type="button">&#8592; Back</button>
     <button class="corner" id="nextBtn6" type="button">Next &#8594;</button>
   </div>
+    <div id="page13"><div class="shade"></div>
+      <canvas id="l13motes" aria-hidden="true"></canvas>
+      <p class="l13chaphead">· Chapter Thirteen ·</p>
+      <div class="l13main">
+        <div id="l13envScene">
+          <p id="l13whisper">Some words are better kept in a letter.</p>
+          <div id="l13env">
+            <div class="l13envback"></div>
+            <div class="l13envpaper"></div>
+            <div class="l13envinner"></div>
+            <div class="l13envfront"></div>
+            <svg class="l13envlines" viewBox="0 0 300 200" preserveAspectRatio="none" aria-hidden="true"><path d="M4 6 L146 122 L296 6" fill="none" stroke="rgba(178,132,62,.45)" stroke-width="1.4"/><path d="M4 194 L120 96 M296 194 L180 96" fill="none" stroke="rgba(178,132,62,.3)" stroke-width="1.2"/></svg>
+            <div class="l13envflap" aria-hidden="true"><div class="l13face l13fface"></div><div class="l13face l13bface"></div></div>
+            <button id="l13seal" aria-label="Tap the seal to open the letter">
+          <svg viewBox="0 0 68 68" width="68" height="68" aria-hidden="true">
+            <defs>
+              <radialGradient id="l13sealGold" cx="38%" cy="32%" r="80%">
+                <stop offset="0%" stop-color="#f2d98c"/><stop offset="45%" stop-color="#d9a84e"/><stop offset="100%" stop-color="#a8742c"/>
+              </radialGradient>
+              <linearGradient id="l13heartGold" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#c08c34"/><stop offset="100%" stop-color="#8a5a1e"/>
+              </linearGradient>
+            </defs>
+            <circle cx="34" cy="34" r="31" fill="url(#l13sealGold)" stroke="#96682a" stroke-width="1"/>
+            <circle cx="34" cy="34" r="26.5" fill="none" stroke="rgba(122,74,32,.4)" stroke-width="1"/>
+            <g transform="translate(34 35) scale(1.62) translate(-12 -12)">
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="rgba(255,244,200,.55)" transform="translate(0 -0.9)"/>
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="url(#l13heartGold)"/>
+            </g>
+            <path class="l13crackGlow" d="M18 17 L31 27 L26 38 L39 51" fill="none" stroke="#ffe9a8" stroke-width="5.5" stroke-linecap="round"/>
+            <path class="l13crackLine" pathLength="100" d="M18 17 L31 27 L26 38 L39 51" fill="none" stroke="#fff3c4" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+          <span class="l13sheen" aria-hidden="true"><span></span></span>
+        </button>
+          </div>
+          <div id="l13tapPrompt">Tap the seal</div>
+        </div>
+        <div id="l13reader">
+          <div id="l13scroller">
+            <div id="l13card">
+              <div id="l13flourish" aria-hidden="true"><span class="l13flline"></span><span class="l13fldia"></span><span class="l13flline r"></span></div>
+              <div id="l13paras"></div>
+              <div id="l13sigBlock">
+                <div id="l13sigText"></div>
+                <svg id="l13sigHeart" viewBox="0 0 68 68" width="30" height="30" aria-hidden="true">
+              <defs>
+                <radialGradient id="l13sigGold" cx="38%" cy="32%" r="80%">
+                  <stop offset="0%" stop-color="#f2d98c"/><stop offset="45%" stop-color="#d9a84e"/><stop offset="100%" stop-color="#a8742c"/>
+                </radialGradient>
+                <linearGradient id="l13sigHeartGold" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#c08c34"/><stop offset="100%" stop-color="#8a5a1e"/>
+                </linearGradient>
+              </defs>
+              <circle cx="34" cy="34" r="31" fill="url(#l13sigGold)" stroke="#96682a" stroke-width="2"/>
+              <g transform="translate(34 35) scale(2.05) translate(-12 -12)">
+                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="url(#l13sigHeartGold)"/>
+              </g>
+            </svg>
+              </div>
+            </div>
+          </div>
+          <div id="l13controls">
+            <div id="l13hint">Tap to continue reading</div>
+            <button id="l13readAll" type="button">Read full letter</button>
+          </div>
+        </div>
+      </div>
+      <div class="pagenum" id="l13pagenum">· 13 ·</div>
+      <button class="corner" id="backBtn13" type="button">&#8592; Back</button>
+      <button class="corner" id="nextBtn13" type="button">Next &#8594;</button>
+    </div>
     <div id="page14"><div class="shade"></div>
     <svg id="e14bgheart" viewBox="0 0 120 116" aria-hidden="true"><path d="M60 108 C30 84 8 62 8 38 C8 18 22 6 38 6 C50 6 58 12 60 20 C62 12 70 6 82 6 C98 6 112 18 112 38 C112 62 90 84 60 108Z" fill="#c2183f"/></svg>
     <canvas class="e14hcanvas" id="e14hearts"></canvas>
@@ -586,6 +753,7 @@
     if (!opened) return; opened = false;
     page3El.style.display='none'; page3El.classList.remove('live'); page4El.style.display='none'; document.getElementById('page5').style.display='none'; if (window.__garden) window.__garden.exit(); page6El.style.display='none'; if (window.__mimi6) window.__mimi6.exit(); page5El.classList.remove('turning','turnback-start','turning-back'); page6El.classList.remove('turning','turnback-start','turning-back'); page4El.classList.remove('turning','turnback-start','turning-back'); page3El.classList.remove('turning','turnback-start','turning-back'); if (window.__petals4) window.__petals4.stop(); page2El.style.display='flex';
     page14El.style.display='none'; page14El.classList.remove('turning','turnback-start','turning-back'); if (window.__ending14) window.__ending14.exitClose();
+    page13El.style.display='none'; page13El.classList.remove('turning','turnback-start','turning-back'); if (window.__letter13) window.__letter13.exitClose();
     page2El.classList.remove('turning','turnback-start','turning-back'); if (turnTimer){ clearTimeout(turnTimer); turnTimer=null; } turning=false;
     page2Hearts.stop(); page3Hearts.stop(); coverHearts.start();
     clearTimeout(openTimer);
@@ -683,28 +851,53 @@
       turning=false;
     }, 990);
   });
+  var page13El = document.getElementById('page13');
   var page14El = document.getElementById('page14');
   document.getElementById('nextBtn6').addEventListener('click', function(){
     if (turning) return; turning=true;
     if (window.__mimi6) window.__mimi6.exit();
-    page14El.style.display='flex';
-    if (window.__ending14) window.__ending14.enter();
+    page13El.style.display='flex';
+    if (window.__letter13) window.__letter13.enter();
     page6El.classList.add('turning');
     turnTimer=setTimeout(function(){
       page6El.style.display='none'; page6El.classList.remove('turning');
       turning=false;
     }, 990);
   });
-  document.getElementById('backBtn14').addEventListener('click', function(){
+  document.getElementById('nextBtn13').addEventListener('click', function(){
     if (turning) return; turning=true;
-    if (window.__ending14) window.__ending14.exitBack();
+    if (window.__letter13) window.__letter13.exitNext();
+    page14El.style.display='flex';
+    if (window.__ending14) window.__ending14.enter();
+    page13El.classList.add('turning');
+    turnTimer=setTimeout(function(){
+      page13El.style.display='none'; page13El.classList.remove('turning');
+      turning=false;
+    }, 990);
+  });
+  document.getElementById('backBtn13').addEventListener('click', function(){
+    if (turning) return; turning=true;
+    if (window.__letter13) window.__letter13.exit();
     page6El.style.display='block';
     if (window.__mimi6) window.__mimi6.enter();
     page6El.classList.add('turnback-start'); void page6El.offsetWidth;
     page6El.classList.add('turning-back');
     turnTimer=setTimeout(function(){
-      page14El.style.display='none';
+      page13El.style.display='none';
       page6El.classList.remove('turnback-start'); page6El.classList.remove('turning-back');
+      turning=false;
+    }, 990);
+  });
+  document.getElementById('backBtn14').addEventListener('click', function(){
+    if (turning) return; turning=true;
+    if (window.__ending14) window.__ending14.exitBack();
+    page13El.style.display='flex';
+    if (window.__letter13) window.__letter13.enter();
+    page13El.classList.add('turnback-start'); void page13El.offsetWidth;
+    page13El.classList.add('turning-back');
+    turnTimer=setTimeout(function(){
+      page14El.style.display='none';
+      page13El.classList.remove('turnback-start'); page13El.classList.remove('turning-back');
       turning=false;
     }, 990);
   });
@@ -969,8 +1162,9 @@
     musicWanted=!musicWanted;
     this.classList.toggle('muted', !musicWanted);
     if (window.__gardenWind) window.__gardenWind.muted = !musicWanted;
-    if (musicWanted){ if (!window.__gardenOn && !window.__e14On) startMusic(); } else stopMusic();
+    if (musicWanted){ if (!window.__gardenOn && !window.__e14On && !window.__l13On) startMusic(); } else stopMusic();
     if (window.__ending14) window.__ending14.setMuted(!musicWanted);
+    if (window.__letter13) window.__letter13.setMuted(!musicWanted);
   });
 
   // — Chapter Five: The Endless Forest (a rose-forest journey) —
@@ -2047,11 +2241,10 @@
       if (actx && endGain){ try{ var n=actx.currentTime; endGain.gain.cancelScheduledValues(n); endGain.gain.setValueAtTime(endGain.gain.value, n); endGain.gain.linearRampToValueAtTime(0, n+.45); }catch(e){} }
       endStarted=false; ePaused=false;
       resetFlow();
-      /* the book's music-box resumes (unless muted) */
-      if (musicWanted){
-        if (actx && musicGain){ try{ musicGain.gain.cancelScheduledValues(actx.currentTime); musicGain.gain.setTargetAtTime(1, actx.currentTime, .4); }catch(e){} }
-        startMusic();
-      }
+      /* Back now lands on Chapter Thirteen, which keeps the book's
+         music-box silent for its own letter audio — the music-box
+         resumes only when the letter page itself exits back to
+         Chapter Six (see __letter13.exit). */
     }
     function exitClose(){
       if (!liveNow) return;   /* an ordinary close (from page 2) never touches this page */
@@ -2075,6 +2268,582 @@
   })();
 
 
+  // — Chapter Thirteen: The Letter (transplanted from the approved
+  //    ch13-letter demo2; mirrors the Chapter Fourteen module pattern) —
+  (function(){
+    "use strict";
+    function $(id){ return document.getElementById(id); }
+    var page13=$("page13"), envScene=$("l13envScene"), env=$("l13env"), sealBtn=$("l13seal"),
+        tapPrompt=$("l13tapPrompt"), whisperEl=$("l13whisper"),
+        reader=$("l13reader"), scroller=$("l13scroller"), parasEl=$("l13paras"),
+        sigBlock=$("l13sigBlock"), sigText=$("l13sigText"), hint=$("l13hint"),
+        readAllBtn=$("l13readAll"), pagenum=$("l13pagenum");
+
+    /* ============================================================
+       COPY — the letter itself. When the admin panel arrives, this
+       is the text Shaheer edits: each entry is one paragraph
+       (revealed tap by tap); \n inside a paragraph is a line break.
+       ============================================================ */
+    var LETTER_PARAS = [
+"My dearest,\nI have started this letter so many times in my head that the words feel worn smooth, like a stone carried in a pocket. So let me keep it simple, the way true things usually are: you are the best part of my ordinary days, and I don't think you have any idea how much light you carry into a room without even trying.",
+"Today is your birthday, and everyone will tell you to make a wish. But if I am honest, you are the wish — the one I never said out loud, the one that somehow came true anyway. Every small thing about you — the way you laugh before the joke is even finished, the way you are kind when no one is watching — keeps reminding me how lucky I am that our paths ever crossed.",
+"I can't promise you a perfect life. But I can promise you this: on your hard days, you will not carry them alone. On your quiet days, I will sit in the quiet with you. And on your bright days — and I hope there are so many — I will be the one clapping the loudest, probably with tears in my eyes, pretending I am not crying.",
+"So keep this little letter somewhere safe, and come back to it whenever the world feels heavy. Nothing in it will ever expire. You are loved — not for anything you do, not only on the days you shine, but simply because you are you. Today, tomorrow, and every ordinary, beautiful day after that."
+];
+    var SIGNATURE = "— Someone who adores you.";
+
+    sigText.textContent = SIGNATURE;
+    var paraEls = LETTER_PARAS.map(function(t){
+      var p = document.createElement("p");
+      p.className = "l13para";
+      p.textContent = t;
+      parasEl.appendChild(p);
+      return p;
+    });
+
+    var lRM = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    var liveNow = false;
+    var muted13 = false;               /* follows the book's musicWanted via setMuted */
+    var state = 'sealed';              /* sealed -> opening -> reading -> finished */
+    var shown = 0, advanceLock = false, finished = false, sigWantedFrontier = false;
+
+    /* every flow timer is tracked, so leaving the page in any
+       direction cancels the whole ceremony cleanly */
+    var lTimers = [], settleIv = null;
+    function later(fn, ms){ var id = setTimeout(fn, ms); lTimers.push(id); return id; }
+    function clearTimers(){
+      for (var i=0;i<lTimers.length;i++) clearTimeout(lTimers[i]);
+      lTimers = [];
+      if (settleIv){ clearInterval(settleIv); settleIv = null; }
+    }
+
+    /* ================= LETTER AUDIO =================
+       Routes through ONE letterGain master into the book's shared
+       AudioContext. The stage mute button drives setMuted(). */
+    var letterGain = null;
+    function ensureAudio(){
+      if (!actx){ try{ actx = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ actx = null; } }
+      if (actx && actx.state === 'suspended') actx.resume();
+      if (!actx) return;
+      if (!letterGain){
+        letterGain = actx.createGain();
+        letterGain.gain.value = muted13 ? 0 : 1;
+        letterGain.connect(actx.destination);
+      } else {
+        try{
+          var n = actx.currentTime;
+          letterGain.gain.cancelScheduledValues(n);
+          letterGain.gain.setTargetAtTime(muted13 ? 0 : 1, n, .05);
+        }catch(e){}
+      }
+    }
+    function paperSlide(){
+      if (!actx || !letterGain) return;
+      try{
+        var dur = .8, sr = actx.sampleRate;
+        var buf = actx.createBuffer(1, Math.floor(sr*dur), sr);
+        var ch = buf.getChannelData(0);
+        for (var i=0;i<ch.length;i++) ch[i] = Math.random()*2-1;
+        var src = actx.createBufferSource(); src.buffer = buf;
+        var bp = actx.createBiquadFilter(); bp.type = 'bandpass'; bp.Q.value = 1.1;
+        var t = actx.currentTime;
+        bp.frequency.setValueAtTime(420, t);
+        bp.frequency.exponentialRampToValueAtTime(1900, t + dur*.65);
+        bp.frequency.exponentialRampToValueAtTime(500, t + dur);
+        var g = actx.createGain();
+        g.gain.setValueAtTime(0, t);
+        g.gain.linearRampToValueAtTime(.14, t + dur*.25);
+        g.gain.linearRampToValueAtTime(0, t + dur);
+        src.connect(bp); bp.connect(g); g.connect(letterGain);
+        src.start(t); src.stop(t + dur + .05);
+      }catch(e){}
+    }
+    function musicNote(f, t, vol, dur){
+      if (!actx || !letterGain) return;
+      try{
+        var o1 = actx.createOscillator(); o1.type = 'sine'; o1.frequency.value = f;
+        var o2 = actx.createOscillator(); o2.type = 'sine'; o2.frequency.value = f*2;
+        var g1 = actx.createGain(), g2 = actx.createGain();
+        g1.gain.setValueAtTime(0, t);
+        g1.gain.linearRampToValueAtTime(vol, t + .012);
+        g1.gain.exponentialRampToValueAtTime(.0001, t + dur);
+        g2.gain.setValueAtTime(0, t);
+        g2.gain.linearRampToValueAtTime(vol*.32, t + .008);
+        g2.gain.exponentialRampToValueAtTime(.0001, t + dur*.55);
+        o1.connect(g1); g1.connect(letterGain);
+        o2.connect(g2); g2.connect(letterGain);
+        o1.start(t); o1.stop(t + dur + .05);
+        o2.start(t); o2.stop(t + dur + .05);
+      }catch(e){}
+    }
+    function unsealChord(){
+      if (!actx || !letterGain) return;
+      var t = actx.currentTime + .02;
+      [523.25, 659.25, 783.99, 1046.50].forEach(function(f, i){
+        musicNote(f, t + i*.04, .16, 2.2);
+      });
+    }
+    function sigChord(){
+      if (!actx || !letterGain) return;
+      var t = actx.currentTime + .02;
+      [392.00, 523.25, 659.25, 783.99].forEach(function(f, i){
+        musicNote(f, t + i*.06, .13, 2.6);
+      });
+    }
+
+    /* ============ LETTER_MUSIC — the ambient underscore ============
+       A slow, original music-box underscore written for this page,
+       in the same warmth chain as the Chapter Fourteen lullaby but
+       quieter (master .165 = 30% of the ending's .55). Starts at
+       the unseal, loops under the whole reading, and stops the
+       moment the page is left. Nothing here touches the book's
+       music-box or the ending's lullaby. */
+    var LETTER_BEAT = .92, LM_MASTER = .165;
+    var LM_MELODY = [
+      [76,2],[72,2],[74,1],[76,1],[79,2],[76,2],[72,4],[0,2],[74,2],[76,2],[74,1],[72,1],
+      [69,2],[72,2],[69,4],[0,2],[67,2],[69,1],[72,1],[74,2],[72,2],[69,2],[67,2],[64,4],
+      [0,2],[76,2],[79,2],[76,1],[74,1],[72,2],[74,2],[76,2],[72,2],[74,1],[72,1],[69,2],
+      [67,2],[69,2],[64,4]
+    ];
+    var LM_PADS = { 0:'C', 10:'F', 20:'G', 30:'Am', 34:'C' };
+    var LM_CHORDS = {
+      C: [261.63, 329.63, 392.00], F: [174.61, 220.00, 261.63],
+      G: [196.00, 246.94, 293.66], Am: [220.00, 261.63, 329.63]
+    };
+    var lmEvents = [], lmTotal = 0;
+    (function(){ var b = 0;
+      for (var i=0;i<LM_MELODY.length;i++){ lmEvents.push({ beat:b, midi:LM_MELODY[i][0] }); b += LM_MELODY[i][1]; }
+      lmTotal = b; })();
+    var lmGain = null, lmPadBus = null, lmTimer = null, lmIdx = 0, lmNext = 0, lmStarted = false;
+    function lmBuildChain(){
+      var master = actx.createGain(); master.gain.value = 0;
+      var lp = actx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 2450; lp.Q.value = .4;
+      master.connect(lp);
+      var dry = actx.createGain(); dry.gain.value = .85;
+      lp.connect(dry); dry.connect(master);
+      try{
+        var sr = actx.sampleRate, len = Math.floor(sr*2.2);
+        var ir = actx.createBuffer(2, len, sr);
+        for (var c=0;c<2;c++){ var d = ir.getChannelData(c);
+          for (var i=0;i<len;i++){ var p = i/len; d[i] = (Math.random()*2-1) * Math.pow(1-p, 2.8); } }
+        var conv = actx.createConvolver(); conv.buffer = ir;
+        var wet = actx.createGain(); wet.gain.value = .5;
+        lp.connect(conv); conv.connect(wet); wet.connect(master);
+      }catch(e){}
+      try{
+        var dly = actx.createDelay(1); dly.delayTime.value = .27;
+        var fb = actx.createGain(); fb.gain.value = .24;
+        var dwet = actx.createGain(); dwet.gain.value = .13;
+        lp.connect(dly); dly.connect(fb); fb.connect(dly);
+        dly.connect(dwet); dwet.connect(master);
+      }catch(e){}
+      var padBus = actx.createGain(); padBus.gain.value = 1;
+      var plp = actx.createBiquadFilter(); plp.type = 'lowpass'; plp.frequency.value = 850; plp.Q.value = .3;
+      padBus.connect(plp); plp.connect(master);
+      master.connect(letterGain);
+      return { master:master, padBus:padBus };
+    }
+    function lmPad(freqs, t, durBeats){
+      if (!actx || !lmPadBus) return;
+      freqs.forEach(function(f){
+        [0, 5].forEach(function(cents){
+          try{
+            var o = actx.createOscillator();
+            o.type = (cents === 0) ? 'sine' : 'triangle';
+            o.frequency.value = f; o.detune.value = cents;
+            var g = actx.createGain();
+            var dur = durBeats * LETTER_BEAT;
+            g.gain.setValueAtTime(0, t);
+            g.gain.linearRampToValueAtTime(.03, t + .45);
+            g.gain.setValueAtTime(.03, t + Math.max(.45, dur - .6));
+            g.gain.linearRampToValueAtTime(0, t + dur);
+            o.connect(g); g.connect(lmPadBus);
+            o.start(t); o.stop(t + dur + .05);
+          }catch(e){}
+        });
+      });
+    }
+    function lmNote(midi, t){
+      var f = 440 * Math.pow(2, (midi - 69)/12);
+      if (!actx || !lmGain) return;
+      try{
+        var o1 = actx.createOscillator(); o1.type = 'sine'; o1.frequency.value = f;
+        var o2 = actx.createOscillator(); o2.type = 'sine'; o2.frequency.value = f*2;
+        var g1 = actx.createGain(), g2 = actx.createGain();
+        g1.gain.setValueAtTime(0, t);
+        g1.gain.linearRampToValueAtTime(.14, t + .012);
+        g1.gain.exponentialRampToValueAtTime(.0001, t + 1.7);
+        g2.gain.setValueAtTime(0, t);
+        g2.gain.linearRampToValueAtTime(.045, t + .008);
+        g2.gain.exponentialRampToValueAtTime(.0001, t + .9);
+        o1.connect(g1); g1.connect(lmGain);
+        o2.connect(g2); g2.connect(lmGain);
+        o1.start(t); o1.stop(t + 1.8);
+        o2.start(t); o2.stop(t + 1.0);
+      }catch(e){}
+    }
+    function lmTick(){
+      if (!actx) return;
+      var ahead = actx.currentTime + .6;
+      var guard = 0;
+      while (lmNext < ahead && guard++ < 200){
+        if (lmNext < actx.currentTime - .05){ lmNext = actx.currentTime + .05; }
+        var ev = lmEvents[lmIdx], at = lmNext;
+        var padName = LM_PADS[ev.beat];
+        if (padName){
+          var nb = lmEvents[(lmIdx + 1) % lmEvents.length];
+          var span = (lmIdx === lmEvents.length - 1) ? (lmTotal - ev.beat + lmEvents[0].beat) : (nb.beat - ev.beat);
+          var untilNextPad = span, probe = lmIdx;
+          for (var k=1;k<=lmEvents.length;k++){
+            var pe = lmEvents[(probe + k) % lmEvents.length];
+            if (LM_PADS[pe.beat]) break;
+            untilNextPad += (lmEvents[(probe + k + 1) % lmEvents.length].beat - pe.beat + lmTotal) % lmTotal || 0;
+            if (k > 40) break;
+          }
+          lmPad(LM_CHORDS[padName], at, Math.max(span, 4));
+        }
+        if (ev.midi) lmNote(ev.midi, at);
+        lmIdx = (lmIdx + 1) % lmEvents.length;
+        var cur = lmEvents[lmIdx];
+        var stepBeats = (cur.beat - ev.beat + lmTotal) % lmTotal;
+        if (stepBeats === 0) stepBeats = lmTotal - ev.beat + lmEvents[0].beat;
+        lmNext += stepBeats * LETTER_BEAT;
+      }
+    }
+    function startLetterMusic(){
+      if (!actx || !letterGain) return;
+      if (lmStarted) return;
+      if (!lmGain){ var built = lmBuildChain(); lmGain = built.master; lmPadBus = built.padBus; }
+      lmIdx = 0; lmNext = actx.currentTime + .3; lmStarted = true;
+      try{
+        var n = actx.currentTime;
+        lmGain.gain.cancelScheduledValues(n);
+        lmGain.gain.setValueAtTime(lmGain.gain.value, n);
+        lmGain.gain.linearRampToValueAtTime(LM_MASTER, n + 2.5);
+      }catch(e){}
+      lmTick();
+      if (lmTimer) clearInterval(lmTimer);
+      lmTimer = setInterval(lmTick, 200);
+    }
+    function stopLetterMusic(){
+      if (lmTimer){ clearInterval(lmTimer); lmTimer = null; }
+      lmStarted = false;
+      if (actx && lmGain){
+        try{
+          var n = actx.currentTime;
+          lmGain.gain.cancelScheduledValues(n);
+          lmGain.gain.setValueAtTime(lmGain.gain.value, n);
+          lmGain.gain.linearRampToValueAtTime(0, n + .35);
+        }catch(e){}
+      }
+    }
+    document.addEventListener('visibilitychange', function(){
+      if (!liveNow || !actx || !lmStarted) return;
+      if (document.hidden){ try{ actx.suspend(); }catch(e){} }
+      else { lmNext = actx.currentTime + .15; try{ actx.resume(); }catch(e){} }
+    });
+
+    /* ================= GOLDEN MOTES =================
+       The canvas runs only while Chapter Thirteen is the open
+       page; it calms to near-invisible once the letter opens. */
+    var motes = (function(){
+      var cv = $("l13motes");
+      if (lRM || !cv || !cv.getContext) return { start:function(){}, stop:function(){}, calm:function(){}, uncalm:function(){} };
+      var ctx = cv.getContext('2d');
+      var DPR = Math.min(window.devicePixelRatio || 1, 1.75);
+      var W = 0, H = 0, calmTarget = 1, calmLevel = 1, raf = null;
+      var spr = document.createElement('canvas'); spr.width = spr.height = 64;
+      var sg = spr.getContext('2d');
+      var grd = sg.createRadialGradient(32,32,0,32,32,32);
+      grd.addColorStop(0,'rgba(255,236,180,1)');
+      grd.addColorStop(.35,'rgba(244,205,130,.55)');
+      grd.addColorStop(1,'rgba(244,205,130,0)');
+      sg.fillStyle = grd; sg.fillRect(0,0,64,64);
+      var ps = [];
+      for (var i=0;i<14;i++){
+        ps.push({
+          x: Math.random(), y: Math.random(),
+          r: 9 + Math.random()*17,
+          sp: .008 + Math.random()*.014,
+          ph: Math.random()*Math.PI*2,
+          sw: .008 + Math.random()*.02,
+          a: .07 + Math.random()*.16
+        });
+      }
+      function resize(){
+        var r = page13.getBoundingClientRect();
+        if (r.width < 2 || r.height < 2) return;
+        W = Math.round(r.width); H = Math.round(r.height);
+        cv.width = Math.round(W*DPR); cv.height = Math.round(H*DPR);
+      }
+      var t0 = performance.now();
+      function frame(now){
+        raf = requestAnimationFrame(frame);
+        if (document.hidden || !W || !H) return;
+        var t = (now - t0)/1000;
+        calmLevel += (calmTarget - calmLevel) * .012;
+        ctx.setTransform(DPR,0,0,DPR,0,0);
+        ctx.clearRect(0,0,W,H);
+        for (var i=0;i<ps.length;i++){
+          var p = ps[i];
+          var y = (((p.y - t*p.sp) % 1) + 1) % 1;
+          var x = p.x + Math.sin(t*.5 + p.ph) * p.sw;
+          var tw = .75 + .25*Math.sin(t*.8 + p.ph*2);
+          ctx.globalAlpha = p.a * tw * calmLevel;
+          ctx.drawImage(spr, x*W - p.r, y*H - p.r, p.r*2, p.r*2);
+        }
+        ctx.globalAlpha = 1;
+      }
+      window.addEventListener('resize', function(){ if (liveNow) resize(); });
+      return {
+        start: function(){ resize(); calmTarget = 1; calmLevel = 1; if (!raf) raf = requestAnimationFrame(frame); },
+        stop: function(){ if (raf){ cancelAnimationFrame(raf); raf = null; } if (W && H){ ctx.setTransform(DPR,0,0,DPR,0,0); ctx.clearRect(0,0,W,H); } },
+        calm: function(){ calmTarget = .15; },
+        uncalm: function(){ calmTarget = 1; calmLevel = 1; }
+      };
+    })();
+
+    /* ================= THE CEREMONY ================= */
+    function unseal(){
+      if (!liveNow || state !== 'sealed') return;
+      state = 'opening';
+      ensureAudio();
+      whisperEl.classList.add('bye');       /* gone before the flap can reach it */
+      sealBtn.classList.add('lit');
+      later(function(){
+        env.classList.add('opening');
+        paperSlide();
+        later(unsealChord, lRM ? 40 : 300);
+        startLetterMusic();
+        later(function(){ tapPrompt.style.opacity = '0'; }, lRM ? 30 : 420);
+        later(function(){
+          env.classList.add('retreat');
+          sealBtn.classList.add('fading');
+          openLetter();
+          later(function(){ envScene.style.display = 'none'; }, lRM ? 80 : 800);
+        }, lRM ? 150 : 1850);
+      }, lRM ? 60 : 520);
+    }
+    sealBtn.addEventListener('click', unseal);
+    env.addEventListener('click', unseal);
+
+    function openLetter(){
+      state = 'reading';
+      reader.classList.add('show');
+      motes.calm();
+      later(revealNext, 350);
+    }
+
+    /* ---- smart auto-scroll: the frontier rule ---- */
+    function frontierBottom(){
+      if (!shown) return 0;
+      var el = paraEls[shown - 1];
+      var c = scroller.getBoundingClientRect(), r = el.getBoundingClientRect();
+      return scroller.scrollTop + (r.bottom - c.top);
+    }
+    function atFrontier(){
+      var max = scroller.scrollHeight - scroller.clientHeight;
+      var bottom = Math.min(frontierBottom(), max);
+      return (bottom - scroller.scrollTop) <= 80;
+    }
+    function scrollParaIntoComfort(el){
+      var c = scroller.getBoundingClientRect(), r = el.getBoundingClientRect();
+      var target = scroller.scrollTop + (r.top - c.top) - scroller.clientHeight * .18;
+      var max = scroller.scrollHeight - scroller.clientHeight;
+      target = Math.max(0, Math.min(target, max));
+      try{ scroller.scrollTo({ top: target, behavior: 'smooth' }); }
+      catch(e){ scroller.scrollTop = target; }
+    }
+    function paraBelowFold(el){
+      var c = scroller.getBoundingClientRect(), r = el.getBoundingClientRect();
+      return r.bottom > c.bottom - 8;
+    }
+    function whenScrollSettles(cb){
+      var last = -1, stable = 0, waited = 0;
+      later(function(){
+        if (settleIv) clearInterval(settleIv);
+        settleIv = setInterval(function(){
+          waited += 60;
+          var st = scroller.scrollTop;
+          if (Math.abs(st - last) < 1) stable++; else stable = 0;
+          last = st;
+          if ((stable >= 2 && waited >= 220) || waited > 2500){
+            clearInterval(settleIv); settleIv = null;
+            cb();
+          }
+        }, 60);
+      }, 220);
+    }
+
+    function revealNext(){
+      if (!liveNow || state !== 'reading' || finished || shown >= paraEls.length) return;
+      var wasFrontier = sigWantedFrontier || atFrontier();
+      var el = paraEls[shown];
+      shown++;
+      el.classList.add('show');
+      if (wasFrontier && paraBelowFold(el)){
+        later(function(){ scrollParaIntoComfort(el); }, 80);
+      }
+      if (shown >= paraEls.length) finishLetter();
+    }
+
+    function finishLetter(){
+      if (!liveNow) return;
+      finished = true;
+      hint.classList.add('off');
+      readAllBtn.classList.add('off');
+      whenScrollSettles(function(){
+        later(function(){
+          if (!liveNow) return;
+          sigBlock.classList.add('show');
+          sigChord();
+          later(function(){
+            var c = scroller.getBoundingClientRect(), r = sigBlock.getBoundingClientRect();
+            if (r.bottom > c.bottom - 8 || r.top < c.top) scrollParaIntoComfort(sigBlock);
+          }, 250);
+          later(function(){ pagenum.classList.add('show'); }, 900);
+        }, 800);
+      });
+    }
+
+    /* ---- taps: advance the reading (never a page turn) ---- */
+    var pdX = 0, pdY = 0, pdT = 0, pdOn = false;
+    page13.addEventListener('pointerdown', function(e){
+      pdOn = true; pdX = e.clientX; pdY = e.clientY; pdT = performance.now();
+    });
+    page13.addEventListener('pointercancel', function(){ pdOn = false; });
+    page13.addEventListener('pointerup', function(e){
+      if (!pdOn) return; pdOn = false;
+      if (!liveNow) return;
+      var dx = e.clientX - pdX, dy = e.clientY - pdY;
+      if ((dx*dx + dy*dy) > 100) return;                                   /* a drag, not a tap */
+      if (performance.now() - pdT > 500) return;                           /* a hold, not a tap */
+      if (window.__pageTurnSwipe && performance.now() - window.__pageTurnSwipe < 200) return;
+      if (state !== 'reading' || finished) return;
+      if (e.target.closest && e.target.closest('button')) return;         /* corners, seal, read-all */
+      if (advanceLock) return;
+      advanceLock = true; later(function(){ advanceLock = false; }, 260);
+      sigWantedFrontier = atFrontier();
+      revealNext();
+    });
+
+    readAllBtn.addEventListener('click', function(){
+      if (!liveNow || state !== 'reading' || finished) return;
+      readAllBtn.classList.add('off');
+      var remaining = [];
+      for (var i = shown; i < paraEls.length; i++) remaining.push(paraEls[i]);
+      if (!remaining.length) return;
+      remaining.forEach(function(el, k){
+        later(function(){
+          if (!liveNow || state !== 'reading') return;
+          el.classList.add('show');
+          shown++;
+          if (k === remaining.length - 1) finishLetter();
+        }, k * 120);
+      });
+    });
+
+    /* ================= PAGE LIFECYCLE ================= */
+    function resetLetter(){
+      clearTimers();
+      state = 'sealed'; shown = 0; finished = false;
+      advanceLock = false; sigWantedFrontier = false;
+      envScene.style.display = '';
+      envScene.classList.remove('gone');
+      env.classList.remove('opening'); env.classList.remove('retreat');
+      sealBtn.classList.remove('lit'); sealBtn.classList.remove('fading');
+      whisperEl.classList.remove('show'); whisperEl.classList.remove('bye');
+      tapPrompt.style.opacity = '';
+      reader.classList.remove('show');
+      for (var i=0;i<paraEls.length;i++) paraEls[i].classList.remove('show');
+      sigBlock.classList.remove('show');
+      hint.classList.remove('off');
+      readAllBtn.classList.remove('off');
+      pagenum.classList.remove('show');
+      try{ scroller.scrollTop = 0; }catch(e){}
+      motes.uncalm();
+    }
+    /* the book music-box fades out on arrival, the garden's way */
+    function silenceBookMusic13(){
+      if (!actx || !musicTimer) return;
+      if (musicGain){
+        try{
+          musicGain.gain.cancelScheduledValues(actx.currentTime);
+          musicGain.gain.setTargetAtTime(.0001, actx.currentTime, .3);
+        }catch(e){}
+      }
+      later(function(){ if (liveNow) stopMusic(); }, 900);
+    }
+    function resumeBookMusic13(){
+      if (!musicWanted) return;
+      if (actx && musicGain){
+        try{
+          musicGain.gain.cancelScheduledValues(actx.currentTime);
+          musicGain.gain.setTargetAtTime(1, actx.currentTime, .4);
+        }catch(e){}
+      }
+      startMusic();
+    }
+    function enter13(){
+      resetLetter();
+      liveNow = true; window.__l13On = true;
+      page13.classList.add('live');
+      motes.start();
+      silenceBookMusic13();
+      later(function(){ if (liveNow && state === 'sealed') whisperEl.classList.add('show'); }, lRM ? 50 : 550);
+    }
+    function leave13(resumeBook){
+      if (!liveNow) return;
+      liveNow = false; window.__l13On = false;
+      page13.classList.remove('live');
+      motes.stop();
+      stopLetterMusic();
+      if (actx && letterGain){
+        try{
+          var n = actx.currentTime;
+          letterGain.gain.cancelScheduledValues(n);
+          letterGain.gain.setValueAtTime(letterGain.gain.value, n);
+          letterGain.gain.linearRampToValueAtTime(0, n + .25);
+        }catch(e){}
+      }
+      resetLetter();
+      if (resumeBook) resumeBookMusic13();
+    }
+    function setMuted13(m){
+      muted13 = !!m;
+      if (liveNow && actx && letterGain){
+        try{
+          var n = actx.currentTime;
+          letterGain.gain.cancelScheduledValues(n);
+          letterGain.gain.setTargetAtTime(muted13 ? 0 : 1, n, .1);
+        }catch(e){}
+      }
+    }
+    window.__letter13 = {
+      enter: enter13,
+      exit: function(){ leave13(true); },        /* Back -> Chapter Six: book music resumes */
+      exitNext: function(){ leave13(false); },   /* Next -> Chapter Fourteen: stays silent */
+      exitClose: function(){ leave13(false); },  /* the book is closing onto its cover */
+      setMuted: setMuted13
+    };
+    window.__l13State = function(){
+      return {
+        live: liveNow, state: state, shown: shown, finished: finished,
+        lmStarted: lmStarted, muted: muted13,
+        letterGain: letterGain ? +letterGain.gain.value.toFixed(3) : null,
+        lmGain: lmGain ? +lmGain.gain.value.toFixed(3) : null,
+        scrollTop: scroller.scrollTop,
+        scrollHeight: scroller.scrollHeight
+      };
+    };
+    window.__l13Debug = {
+      injectDebt: function(sec){ if (actx) lmNext = actx.currentTime - sec; },
+      next: function(){ return lmNext; },
+      now: function(){ return actx ? actx.currentTime : 0; }
+    };
+  })();
+
   // — Swipe to turn the pages, like a real book —
   (function(){
     var stage = document.querySelector('.stage');
@@ -2082,6 +2851,7 @@
     function currentPage(){
       if (!opened) return 0;
       if (page14El.style.display === 'flex') return 14;
+      if (page13El.style.display === 'flex') return 13;
       if (page6El.style.display === 'block') return 6;
       if (page5El.style.display === 'block') return 5;
       if (page4El.style.display === 'flex') return 4;
@@ -2102,10 +2872,10 @@
       if (dt > 600 || Math.abs(dx) < need || Math.abs(dx) < Math.abs(dy) * 1.6) return;
       window.__pageTurnSwipe = performance.now();
       if (dx < 0){
-        var nb = { 2: 'nextBtn', 3: 'nextBtn3', 4: 'nextBtn4', 5: 'nextBtn5', 6: 'nextBtn6' }[page];
+        var nb = { 2: 'nextBtn', 3: 'nextBtn3', 4: 'nextBtn4', 5: 'nextBtn5', 6: 'nextBtn6', 13: 'nextBtn13' }[page];
         if (nb) document.getElementById(nb).click();
       } else {
-        var bb = { 2: 'backBtn', 3: 'backBtn3', 4: 'backBtn4', 5: 'backBtn5', 6: 'backBtn6', 14: 'backBtn14' }[page];
+        var bb = { 2: 'backBtn', 3: 'backBtn3', 4: 'backBtn4', 5: 'backBtn5', 6: 'backBtn6', 13: 'backBtn13', 14: 'backBtn14' }[page];
         if (bb) document.getElementById(bb).click();
       }
     }, true);
