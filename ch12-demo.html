@@ -32,14 +32,15 @@ h1{font-family:'Playfair Display',serif;font-weight:600;font-size:34px;line-heig
   text-transform:uppercase;color:#e8d5a8;opacity:.85;transition:opacity .6s;pointer-events:none;z-index:3}
 #tapHint b{color:#ffd97a;font-weight:500}
 #princessName{position:absolute;left:0;right:0;top:40%;text-align:center;font-family:'Great Vibes',cursive;
-  font-size:52px;color:#ffd97a;opacity:0;transform:translateY(8px);transition:opacity 1.1s,transform 1.1s;
+  font-size:52px;color:#ff9ebb;text-shadow:0 0 14px rgba(255,158,187,.42),0 0 3px rgba(255,158,187,.30);
+  opacity:0;transform:translateY(8px);transition:opacity 1.1s,transform 1.1s;
   pointer-events:none;z-index:3}
 #princessName.show{opacity:1;transform:translateY(0)}
 #letterLine{position:absolute;left:0;right:0;top:44%;padding:0 34px;text-align:center;font-family:'Great Vibes',cursive;
   font-size:30px;line-height:1.35;color:#f7dd9a;opacity:0;transform:translateY(10px);
   transition:opacity 1.4s,transform 1.4s;pointer-events:none;z-index:3}
 #letterLine.show{opacity:1;transform:translateY(0)}
-#turnHint{position:absolute;left:0;right:0;bottom:148px;text-align:center;font-size:13px;letter-spacing:.22em;
+#turnHint{position:absolute;left:0;right:0;top:63%;text-align:center;font-size:13px;letter-spacing:.22em;
   text-transform:uppercase;color:#e8d5a8;opacity:0;transition:opacity 1.2s;pointer-events:none;z-index:3}
 #turnHint.show{opacity:.9}
 #finaleBtn{position:absolute;left:50%;bottom:96px;transform:translate(-50%,14px);z-index:4;
@@ -56,6 +57,99 @@ h1{font-family:'Playfair Display',serif;font-weight:600;font-size:34px;line-heig
 #replayBtn{position:absolute;left:16px;bottom:16px;z-index:5;background:none;border:0;color:#d9c48f;
   font-family:'Jost',sans-serif;font-size:13px;letter-spacing:.14em;cursor:pointer;opacity:.85;padding:8px}
 @media (max-width:359px){h1{font-size:30px}.whisper{font-size:24px}#princessName{font-size:44px}#letterLine{font-size:26px}}
+
+/* — V4 pure-CSS pink patisserie cake: layered gradients only, no images — */
+#cakeWrap{position:absolute;left:50%;bottom:24px;width:200px;z-index:2;
+  transform:translate(-50%,112%);opacity:0;transition:transform 1.2s ease,opacity 1.2s ease;pointer-events:none}
+#cakeWrap.show{transform:translate(-50%,0);opacity:1;pointer-events:auto}
+#cake{position:relative;display:flex;flex-direction:column;align-items:center;width:100%}
+.candles{position:relative;display:flex;justify-content:space-between;width:52%;height:42px;align-items:flex-end;z-index:2;margin-bottom:-2px}
+.candle{position:relative;width:6px;height:26px;border-radius:2px 2px 0 0;
+  background:repeating-linear-gradient(45deg,#c9971c 0 3px,#fff3c4 3px 6px)}
+.candle .flame{position:absolute;left:50%;bottom:calc(100% + 1px);width:10px;height:14px;margin-left:-5px;
+  border-radius:50% 50% 50% 50%/62% 62% 38% 38%;
+  background:radial-gradient(circle at 50% 78%,#fffbe8 0%,#ffe98a 28%,#ffb52e 58%,#ff7a1a 82%,#ff5a00 100%);
+  opacity:0;transform-origin:50% 100%;transform:scale(.6);transition:opacity .3s}
+.candle .glow{position:absolute;left:50%;top:-17px;width:26px;height:26px;margin-left:-13px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,200,80,.55) 0%,rgba(255,160,60,.22) 45%,rgba(255,160,60,0) 70%);
+  opacity:0;transition:opacity .4s}
+.candle.lit .flame{opacity:1;animation:flick .85s ease-in-out infinite alternate}
+.candle.lit .glow{opacity:.8;animation:glowPulse 1.6s ease-in-out infinite alternate}
+.candle:nth-child(2) .flame{animation-delay:.14s}.candle:nth-child(3) .flame{animation-delay:.28s}
+.candle:nth-child(4) .flame{animation-delay:.07s}.candle:nth-child(5) .flame{animation-delay:.21s}
+.candle:nth-child(2) .glow{animation-delay:.3s}.candle:nth-child(4) .glow{animation-delay:.6s}
+@keyframes flick{from{transform:scale(1) rotate(-2deg);opacity:.92}to{transform:scale(1.12,1.2) rotate(2deg);opacity:1}}
+@keyframes glowPulse{from{opacity:.45}to{opacity:.85}}
+.tier{position:relative;border-radius:7px 7px 3px 3px}
+.tier::after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;
+  background:rgba(58,0,22,.35);border-radius:0 0 3px 3px}
+.tierTop{width:56%;height:44px;
+  background:linear-gradient(180deg,rgba(255,255,255,.75) 0%,rgba(255,255,255,.06) 26%,rgba(120,10,50,0) 58%,rgba(120,10,50,.30) 100%),
+    radial-gradient(ellipse 72% 60% at 28% 16%,rgba(255,255,255,.65),rgba(255,255,255,0) 62%),
+    linear-gradient(180deg,#ffe9f0 0%,#fbd0de 45%,#f7c3d4 100%)}
+.tierMid{width:76%;height:46px;
+  background:linear-gradient(180deg,rgba(255,255,255,.6) 0%,rgba(255,255,255,.04) 26%,rgba(120,10,50,0) 58%,rgba(120,10,50,.32) 100%),
+    radial-gradient(ellipse 72% 60% at 28% 16%,rgba(255,255,255,.55),rgba(255,255,255,0) 62%),
+    linear-gradient(180deg,#f2a7bd 0%,#ee97b0 45%,#e77fa2 100%)}
+.tierBot{width:95%;height:52px;
+  background:linear-gradient(180deg,rgba(255,255,255,.55) 0%,rgba(255,255,255,.04) 26%,rgba(90,0,30,0) 58%,rgba(90,0,30,.34) 100%),
+    radial-gradient(ellipse 72% 60% at 28% 16%,rgba(255,255,255,.5),rgba(255,255,255,0) 62%),
+    linear-gradient(180deg,#e0508a 0%,#d6336c 48%,#c2274f 100%)}
+.goldBand{height:5px;border-radius:2px;position:relative;
+  background:linear-gradient(180deg,#ffe9a8 0%,#f7d774 35%,#b8860b 62%,#ffe9a8 100%)}
+.goldBand::after{content:"";position:absolute;left:2px;right:2px;top:0;height:1px;background:rgba(255,255,255,.9)}
+.goldBand.b1{width:58%}.goldBand.b2{width:78%}
+.frosting{position:absolute;top:0;left:0;right:0;height:18px;z-index:2;border-radius:7px 7px 0 0;
+  background:linear-gradient(180deg,#fffdfd 0%,#fff7f9 8px,rgba(255,247,249,0) 8px)}
+.frosting::before{content:"";position:absolute;left:0;right:0;top:8px;height:12px;
+  background-image:radial-gradient(circle at 9px 0px,#fff7f9 9px,rgba(0,0,0,0) 10px),
+    radial-gradient(circle at 27px 0px,#fff7f9 6.5px,rgba(0,0,0,0) 7.5px);
+  background-size:36px 12px;background-repeat:repeat-x}
+.frosting::after{content:"";position:absolute;left:5px;right:5px;top:1px;height:2px;border-radius:2px;
+  background:rgba(255,255,255,.95)}
+.rose{position:absolute;width:14px;height:14px;border-radius:50%;z-index:3;
+  background:radial-gradient(circle at 35% 32%,#a3133f 0%,#c2274f 22%,#e0508a 52%,#ff9ebb 78%,#ffc2d4 100%)}
+.rose::after{content:"";position:absolute;left:50%;top:50%;width:3px;height:3px;margin:-1.5px 0 0 -1.5px;border-radius:50%;
+  background:radial-gradient(circle at 35% 30%,#fff6c8,#d4a017 70%)}
+.pearl{position:absolute;width:5px;height:5px;border-radius:50%;z-index:2;
+  background:radial-gradient(circle at 35% 30%,#ffffff 0%,#ffe9f0 45%,#e8b7c8 100%)}
+.plate{width:108%;height:11px;border-radius:50%;margin-top:-1px;
+  background:radial-gradient(ellipse at 50% 32%,#fff3c4 0%,#f7d774 38%,#c9971c 68%,#8a6410 100%)}
+.stem{width:16px;height:12px;background:linear-gradient(90deg,#8a6410,#f7d774 45%,#c9971c)}
+.base{width:74px;height:7px;border-radius:50%;
+  background:radial-gradient(ellipse at 50% 30%,#ffe9a8 0%,#e9c25e 45%,#b8860b 100%)}
+#cakeGap{position:absolute;right:3px;bottom:30px;width:60px;height:152px;z-index:4;pointer-events:none;
+  clip-path:polygon(21.7% 0,31.7% 0,31.7% 29%,65% 29%,65% 65%,96.7% 65%,96.7% 100%,21.7% 100%);
+  background:linear-gradient(90deg,#2a0410 0%,#6b1830 55%,#3d0716 100%);opacity:0;transition:opacity .4s}
+#cakeGap.show{opacity:1}
+#sliceEl{position:absolute;right:3px;bottom:30px;width:32px;height:152px;z-index:5;cursor:pointer;
+  clip-path:polygon(0 16%,100% 0,100% 100%,0 84%);
+  background:linear-gradient(90deg,rgba(255,255,255,.4) 0%,rgba(255,255,255,0) 30%,rgba(60,0,20,.20) 100%),
+    linear-gradient(180deg,#fff7f9 0 14px,#ffe9f0 14px 40px,#f7c3d4 40px 58px,#f7d774 58px 63px,
+    #f2a7bd 63px 88px,#e77fa2 88px 109px,#f7d774 109px 114px,#e0508a 114px 136px,#c2274f 136px 152px);
+  opacity:0;transform:translateX(0) rotate(0deg);transform-origin:50% 80%;
+  transition:transform .7s ease,opacity .45s ease;pointer-events:none}
+#sliceEl.cut{opacity:1;transform:translateX(46px) rotate(6deg);pointer-events:auto}
+#sliceEl.bite1{transform:translateX(46px) rotate(6deg) scale(.72)}
+#sliceEl.bite2{transform:translateX(46px) rotate(6deg) scale(.45)}
+#sliceEl.gone{opacity:0;transform:translateX(46px) rotate(6deg) scale(.15);pointer-events:none}
+.crumb{position:absolute;width:6px;height:6px;border-radius:50%;pointer-events:none;z-index:6;
+  background:radial-gradient(circle,#fff3c4,#e9b64a 60%,rgba(233,182,74,0));
+  animation:crumbFly .7s ease-out forwards}
+@keyframes crumbFly{from{opacity:1;transform:translate(0,0) scale(1)}to{opacity:0;transform:translate(var(--dx,10px),var(--dy,-18px)) scale(.3)}}
+#yum{position:absolute;left:0;right:0;top:-38px;text-align:center;font-family:'Great Vibes',cursive;
+  font-size:32px;color:#ffd97a;opacity:0;transition:opacity .6s;pointer-events:none;z-index:6}
+#yum.show{opacity:1}
+#cakeHint{position:absolute;left:0;right:0;top:calc(100% + 2px);text-align:center;font-size:11px;
+  letter-spacing:.18em;text-transform:uppercase;color:#e8d5a8;opacity:0;transition:opacity .8s;
+  pointer-events:none;white-space:nowrap}
+#cakeHint.show{opacity:.9}
+@media (max-width:359px){#cakeWrap{width:172px}}
+@media (prefers-reduced-motion:reduce){
+  .candle.lit .flame,.candle.lit .glow{animation:none}
+  #cakeWrap{transition:none}
+  .crumb{animation:none}
+}
 </style>
 </head>
 <body>
@@ -81,6 +175,43 @@ h1{font-family:'Playfair Display',serif;font-weight:600;font-size:34px;line-heig
       <circle cx="38" cy="86" r="1.6"/><circle cx="160" cy="82" r="1.6"/><circle cx="272" cy="85" r="1.6"/><circle cx="200" cy="90" r="1.6"/>
     </g>
   </svg>
+  <div id="cakeWrap">
+    <div id="yum">Yum!</div>
+    <div id="cake">
+      <div class="candles">
+        <div class="candle"><div class="glow"></div><div class="flame"></div></div>
+        <div class="candle"><div class="glow"></div><div class="flame"></div></div>
+        <div class="candle"><div class="glow"></div><div class="flame"></div></div>
+        <div class="candle"><div class="glow"></div><div class="flame"></div></div>
+        <div class="candle"><div class="glow"></div><div class="flame"></div></div>
+      </div>
+      <div class="tier tierTop">
+        <div class="frosting"></div>
+        <div class="rose" style="left:10%;bottom:5px"></div>
+        <div class="rose" style="left:43%;bottom:5px"></div>
+        <div class="rose" style="left:76%;bottom:5px"></div>
+      </div>
+      <div class="goldBand b1"></div>
+      <div class="tier tierMid">
+        <div class="pearl" style="left:12%;top:9px"></div>
+        <div class="pearl" style="left:84%;top:12px"></div>
+        <div class="pearl" style="left:48%;bottom:7px"></div>
+      </div>
+      <div class="goldBand b2"></div>
+      <div class="tier tierBot">
+        <div class="pearl" style="left:9%;top:10px"></div>
+        <div class="pearl" style="left:88%;bottom:9px"></div>
+        <div class="pearl" style="left:50%;top:7px"></div>
+        <div class="pearl" style="left:30%;bottom:8px"></div>
+      </div>
+      <div class="plate"></div>
+      <div class="stem"></div>
+      <div class="base"></div>
+      <div id="cakeGap"></div>
+      <div id="sliceEl" role="button" aria-label="A slice of cake"></div>
+    </div>
+    <div id="cakeHint">Tap to cut a slice</div>
+  </div>
   <header id="pageHead">
     <div class="kicker">Chapter Twelve</div>
     <h1>Happy Birthday</h1>
@@ -110,6 +241,13 @@ const princessEl = document.getElementById('princessName');
 const letterEl = document.getElementById('letterLine');
 const turnEl = document.getElementById('turnHint');
 const musicBtn = document.getElementById('musicBtn');
+const cakeWrap = document.getElementById('cakeWrap');
+const cakeEl = document.getElementById('cake');
+const sliceEl = document.getElementById('sliceEl');
+const cakeGap = document.getElementById('cakeGap');
+const cakeHint = document.getElementById('cakeHint');
+const yumEl = document.getElementById('yum');
+const candleEls = Array.prototype.slice.call(document.querySelectorAll('.candle'));
 
 let W = 360, H = 780, DPR = 1;
 function resize(){
@@ -134,6 +272,8 @@ function sprite(colorA, colorB){
 const sprGold = sprite('rgba(255,216,130,.95)','rgba(219,164,44,.45)');
 const sprRose = sprite('rgba(255,150,175,.95)','rgba(224,80,138,.4)');
 const sprWhite = sprite('rgba(255,244,214,.95)','rgba(255,214,120,.4)');
+const sprRed = sprite('#ff5a6e','rgba(214,32,64,.45)');
+const sprPink = sprite('#ff9ebb','rgba(224,80,138,.4)');
 
 /* — stars: many small, gentle twinkle (opacity only) — */
 let stars = [];
@@ -257,9 +397,10 @@ function tick(t){
       if (p.a <= 0){ letters.splice(i, 1); continue; }
     }
     const pulse = .16 + .10 * (0.5 + 0.5 * Math.sin(t * .0022 + p.ph));
-    if (p.state === 1){ ctx.globalAlpha = pulse; ctx.drawImage(sprGold, p.x - p.s*2.4, p.y - p.s*2.4, p.s*4.8, p.s*4.8); }
+    const lSpr = p.spr || sprRed;
+    if (p.state === 1){ ctx.globalAlpha = pulse; ctx.drawImage(lSpr, p.x - p.s*2.4, p.y - p.s*2.4, p.s*4.8, p.s*4.8); }
     ctx.globalAlpha = Math.max(0, Math.min(1, p.a));
-    ctx.drawImage(sprGold, p.x - p.s, p.y - p.s, p.s*2, p.s*2);
+    ctx.drawImage(lSpr, p.x - p.s, p.y - p.s, p.s*2, p.s*2);
   }
   ctx.globalAlpha = 1;
   requestAnimationFrame(tick);
@@ -319,6 +460,20 @@ function bloomSound(){
     }
   }catch(e){}
 }
+function sliceSound(){
+  if (muted) return;
+  try{
+    ac();
+    const t = actx.currentTime;
+    const src = actx.createBufferSource(); src.buffer = getNoise();
+    const bp = actx.createBiquadFilter(); bp.type = 'bandpass'; bp.Q.value = 1.4;
+    bp.frequency.setValueAtTime(1400, t); bp.frequency.exponentialRampToValueAtTime(320, t + .22);
+    const g = actx.createGain();
+    g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(.07, t + .02);
+    g.gain.exponentialRampToValueAtTime(.0001, t + .28);
+    src.connect(bp); bp.connect(g); g.connect(musicGain); src.start(t); src.stop(t + .3);
+  }catch(e){}
+}
 function chime(){
   if (muted) return;
   try{ ac(); const t = actx.currentTime + .05; boxNote(NOTE.E5, t, .8); boxNote(NOTE.C6, t + .22, 1.1); }catch(e){}
@@ -369,6 +524,7 @@ function startFinale(){
   finaleBtn.classList.remove('show');
   tapHint.style.opacity = '0';
   pageHead.classList.add('dim');
+  cakeWrap.classList.add('show');
   letterPts = sampleLetters(); letterIdx = 0;
   try{ ac(); if (musicGain) musicGain.gain.value = muted ? 0 : 1; }catch(e){}
   const t0 = actx ? actx.currentTime + .1 : 0;
@@ -393,7 +549,7 @@ function startFinale(){
       const end = Math.min(letterPts.length, letterIdx + batch);
       for (; letterIdx < end; letterIdx++){
         const p = letterPts[letterIdx];
-        letters.push({ x: 30 + Math.random()*(W-60), y: H * (.12 + Math.random()*.3), vx: 0, vy: 0, tx: p.x, ty: p.y, s: 6.5 + Math.random()*3.5, a: .95, ph: Math.random()*6.28, state: 0 });
+        letters.push({ x: 30 + Math.random()*(W-60), y: H * (.12 + Math.random()*.3), vx: 0, vy: 0, tx: p.x, ty: p.y, s: 6.5 + Math.random()*3.5, a: .95, ph: Math.random()*6.28, state: 0, spr: (letterIdx % 2 === 0 ? sprRed : sprPink) });
       }
     }, Math.max(0, (finalStart + k * .42 - (actx ? actx.currentTime : 0)) * 1000)));
   }
@@ -411,12 +567,76 @@ function startFinale(){
       launchRocket(W * .78, H * .34, { gold: false });
     }, 6 * 170 + 120));
   }, total * 1000));
+  /* candles light in rhythm: first four across the final phrase, last on the final note */
+  for (let k = 0; k < 4; k++){
+    melodyTimers.push(setTimeout(function(){ lightCandle(k); },
+      Math.max(0, (finalStart + k * .42 - (actx ? actx.currentTime : 0)) * 1000)));
+  }
+  melodyTimers.push(setTimeout(function(){ lightCandle(4); }, total * 1000));
+  melodyTimers.push(setTimeout(function(){
+    if (act === 2){ cakeHint.textContent = 'Tap to cut a slice'; cakeHint.classList.add('show'); }
+  }, total * 1000 + 400));
   melodyTimers.push(setTimeout(function(){
     princessEl.textContent = PRINCESS_NAME;
     princessEl.classList.add('show');
   }, total * 1000 + 900));
   melodyTimers.push(setTimeout(startAct3, total * 1000 + 3600));
 }
+/* — V4 cake: light, cut, eat — */
+let cakeCut = false, bites = 0, yumTimer = null;
+function lightCandle(i){
+  const c = candleEls[i];
+  if (c) c.classList.add('lit');
+}
+function crumbBurst(x, y){
+  if (RM) return;
+  for (let k = 0; k < 7; k++){
+    const d = document.createElement('span');
+    d.className = 'crumb';
+    d.style.left = x + 'px'; d.style.top = y + 'px';
+    d.style.setProperty('--dx', ((Math.random()-.5)*56).toFixed(0) + 'px');
+    d.style.setProperty('--dy', (-(8 + Math.random()*26)).toFixed(0) + 'px');
+    sliceEl.appendChild(d);
+    setTimeout(function(){ d.remove(); }, 750);
+  }
+}
+function cutCake(){
+  if (cakeCut || !cakeWrap.classList.contains('show')) return;
+  cakeCut = true;
+  sliceEl.classList.add('cut');
+  cakeGap.classList.add('show');
+  sliceSound();
+  cakeHint.textContent = 'Tap the slice to eat it';
+  cakeHint.classList.add('show');
+}
+function eatSlice(e){
+  if (!cakeCut || bites >= 3) return;
+  bites++;
+  const r = sliceEl.getBoundingClientRect();
+  const x = (e && e.clientX ? e.clientX - r.left : r.width / 2);
+  const y = (e && e.clientY ? e.clientY - r.top : r.height / 2);
+  crumbBurst(x, y);
+  if (bites === 1) sliceEl.classList.add('bite1');
+  else if (bites === 2) sliceEl.classList.add('bite2');
+  else {
+    sliceEl.classList.add('gone');
+    yumEl.classList.add('show');
+    cakeHint.textContent = 'A slice for you';
+    if (yumTimer) clearTimeout(yumTimer);
+    yumTimer = setTimeout(function(){ yumEl.classList.remove('show'); }, 1800);
+    setTimeout(function(){ cakeHint.classList.remove('show'); }, 2600);
+  }
+}
+cakeEl.addEventListener('click', function(e){
+  if (e.target.closest('#sliceEl')) return;
+  if (act !== 2 && act !== 3) return;
+  cutCake();
+});
+sliceEl.addEventListener('click', function(e){
+  e.stopPropagation();
+  if (act !== 2 && act !== 3) return;
+  eatSlice(e);
+});
 function startAct3(){
   if (act !== 2) return;
   setAct(3);
@@ -439,6 +659,15 @@ function resetDemo(){
   finaleBtn.classList.remove('show');
   tapHint.style.opacity = '1';
   pageHead.classList.remove('dim');
+  cakeWrap.classList.remove('show');
+  cakeGap.classList.remove('show');
+  sliceEl.classList.remove('cut', 'bite1', 'bite2', 'gone');
+  cakeHint.classList.remove('show');
+  cakeHint.textContent = 'Tap to cut a slice';
+  yumEl.classList.remove('show');
+  candleEls.forEach(function(c){ c.classList.remove('lit'); });
+  if (yumTimer){ clearTimeout(yumTimer); yumTimer = null; }
+  cakeCut = false; bites = 0;
   princessEl.classList.remove('show');
   letterEl.classList.remove('show');
   turnEl.classList.remove('show');
@@ -468,7 +697,10 @@ if (document.fonts && document.fonts.load){
 resize();
 startLoop();
 window.__ch12 = {
-  state: function(){ return { act: act, taps: taps, rockets: rockets.length, sparks: sparks.length, letters: letters.length, muted: muted }; },
+  state: function(){ return { act: act, taps: taps, rockets: rockets.length, sparks: sparks.length, letters: letters.length, muted: muted,
+    cakeShown: cakeWrap.classList.contains('show'), cakeCut: cakeCut, bites: bites,
+    candlesLit: candleEls.filter(function(c){ return c.classList.contains('lit'); }).length,
+    sliceGone: sliceEl.classList.contains('gone'), hintShown: cakeHint.classList.contains('show') }; },
   letterCount: function(){ return letters.length; }
 };
 })();
