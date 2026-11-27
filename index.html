@@ -256,6 +256,19 @@
     #page12.turning-back .shade{transition:opacity .95s ease;opacity:0}
     #page12 img{-webkit-user-drag:none}
     #page12 .pagenum{color:#e8c98a}
+  /* — Chapter Ten: Reasons You Are Special (mist) — base only; the rest lives in ch10.css (lazy) — */
+  #page10{position:absolute;inset:0;z-index:1;display:none;overflow:hidden;touch-action:none;transform-origin:0% 50%;backface-visibility:hidden}
+  #page10.turning{transition:transform .95s cubic-bezier(.38,.12,.3,1);transform:rotateY(-102deg);pointer-events:none;z-index:3}
+  #page10.turning .shade{transition:opacity .95s ease;opacity:1}
+  #page10.turnback-start{transform:rotateY(-102deg);z-index:3}
+  #page10.turnback-start .shade{opacity:1}
+  #page10.turning-back{transition:transform .95s cubic-bezier(.38,.12,.3,1);transform:rotateY(0deg)}
+  #page10.turning-back .shade{transition:opacity .95s ease;opacity:0}
+  #page10 .shade{position:absolute;inset:0;pointer-events:none;opacity:0;z-index:40;background:linear-gradient(90deg, rgba(70,20,35,.5) 0%, transparent 30%)}
+  #page10 .pagenum{color:#774628}
+  #backBtn10{left:14px}
+  #nextBtn10{right:14px;opacity:0;pointer-events:none;transition:opacity .6s ease}
+  #nextBtn10.on{opacity:1;pointer-events:auto}
   #backBtn12{left:14px}
   #nextBtn12{right:14px}
   #page12 #c12sky{position:absolute;inset:0;z-index:1}
@@ -689,6 +702,25 @@
     <button class="corner" id="backBtn6" type="button">&#8592; Back</button>
     <button class="corner" id="nextBtn6" type="button">Next &#8594;</button>
   </div>
+    <div id="page10"><div class="shade"></div>
+      <div class="c10kicker">&middot; Chapter Ten &middot;</div>
+      <h1 class="c10title">Reasons You Are Special</h1>
+      <div class="c10counter"><span id="c10idx">1</span> / 5</div>
+      <div class="c10pane" id="c10pane">
+        <div class="c10reason" id="c10reason"></div>
+        <svg class="c10heart" id="c10heartSvg" viewBox="0 0 200 180" preserveAspectRatio="none" aria-hidden="true">
+          <path id="c10heartPath" d="M100,168 C42,122 12,84 22,48 C29,20 62,12 82,30 C94,42 100,56 100,56 C100,56 106,42 118,30 C138,12 171,20 178,48 C188,84 158,122 100,168 Z"/>
+        </svg>
+        <canvas id="c10mist"></canvas>
+        <canvas id="c10drops"></canvas>
+        <div class="c10breath" id="c10breath"></div>
+      </div>
+      <div class="c10hint" id="c10hint">RUB THE GLASS</div>
+      <button class="c10next" id="c10nextBtn" type="button">Next reason &rarr;</button>
+      <div class="pagenum">&middot; 10 &middot;</div>
+      <button class="corner" id="backBtn10" type="button">&#8592; Back</button>
+      <button class="corner" id="nextBtn10" type="button">Next &#8594;</button>
+    </div>
     <div id="page12" data-act="1"><div class="shade"></div>
       <canvas id="c12sky"></canvas>
       <div id="c12aura" aria-hidden="true"></div>
@@ -901,6 +933,7 @@
     page14El.style.display='none'; page14El.classList.remove('turning','turnback-start','turning-back'); if (window.__ending14) window.__ending14.exitClose();
     page13El.style.display='none'; page13El.classList.remove('turning','turnback-start','turning-back'); if (window.__letter13) window.__letter13.exitClose();
     page12El.style.display='none'; page12El.classList.remove('turning','turnback-start','turning-back'); if (window.__ch12) window.__ch12.exitClose();
+    page10El.style.display='none'; page10El.classList.remove('turning','turnback-start','turning-back'); if (window.__ch10) window.__ch10.exitClose();
     page2El.classList.remove('turning','turnback-start','turning-back'); if (turnTimer){ clearTimeout(turnTimer); turnTimer=null; } turning=false;
     page2Hearts.stop(); page3Hearts.stop(); coverHearts.start();
     clearTimeout(openTimer);
@@ -998,17 +1031,90 @@
       turning=false;
     }, 990);
   });
+  var page10El = document.getElementById('page10');
+  /* — Chapter Ten lazy load: ch10.css + ch10.js arrive only on first arrival
+     at page 10 (same pattern as Mimi's brain files). — */
+  var c10Loading = false, c10Queue = [];
+  function loadCh10(cb){
+    if (window.__ch10){ cb(); return; }
+    c10Queue.push(cb);
+    if (c10Loading) return; c10Loading = true;
+    var l = document.createElement('link'); l.rel = 'stylesheet'; l.href = 'ch10.css';
+    document.head.appendChild(l);
+    var sc = document.createElement('script'); sc.src = 'ch10.js';
+    sc.onload = function(){
+      var q = c10Queue; c10Queue = [];
+      for (var i = 0; i < q.length; i++){ try{ q[i](); }catch(e){} }
+    };
+    sc.onerror = function(){
+      /* Never strand her on page 10: show reason 1 and unlock the corner Next. */
+      var r = document.getElementById('c10reason');
+      if (r) r.textContent = 'Because your smile turns an ordinary day into a celebration.';
+      var nb10 = document.getElementById('nextBtn10');
+      if (nb10) nb10.classList.add('on');
+      var q = c10Queue; c10Queue = [];
+      for (var i = 0; i < q.length; i++){ try{ q[i](); }catch(e){} }
+    };
+    document.head.appendChild(sc);
+  }
+  function silenceBookMusic10(){
+    if (!actx || !musicTimer) return;
+    if (musicGain){
+      try{
+        musicGain.gain.cancelScheduledValues(actx.currentTime);
+        musicGain.gain.setTargetAtTime(.0001, actx.currentTime, .3);
+      }catch(e){}
+    }
+    setTimeout(function(){ if (window.__c10On) stopMusic(); }, 900);
+  }
+  function resumeBookMusic10(){
+    if (!musicWanted) return;
+    if (actx && musicGain){
+      try{
+        musicGain.gain.cancelScheduledValues(actx.currentTime);
+        musicGain.gain.setTargetAtTime(1, actx.currentTime, .4);
+      }catch(e){}
+    }
+    startMusic();
+  }
   var page12El = document.getElementById('page12');
   var page13El = document.getElementById('page13');
   var page14El = document.getElementById('page14');
   document.getElementById('nextBtn6').addEventListener('click', function(){
     if (turning) return; turning=true;
     if (window.__mimi6) window.__mimi6.exit();
-    page12El.style.display='block';
-    if (window.__ch12) window.__ch12.enter();
+    page10El.style.display='flex';
+    loadCh10(function(){ silenceBookMusic10(); if (window.__ch10) window.__ch10.enter(); });
     page6El.classList.add('turning');
     turnTimer=setTimeout(function(){
       page6El.style.display='none'; page6El.classList.remove('turning');
+      turning=false;
+    }, 990);
+  });
+  document.getElementById('nextBtn10').addEventListener('click', function(){
+    if (turning) return;
+    if (!document.getElementById('nextBtn10').classList.contains('on')) return; /* locked until the 5th reason is revealed */
+    turning=true;
+    if (window.__ch10) window.__ch10.exitNext();
+    page12El.style.display='block';
+    if (window.__ch12) window.__ch12.enter();
+    page10El.classList.add('turning');
+    turnTimer=setTimeout(function(){
+      page10El.style.display='none'; page10El.classList.remove('turning');
+      turning=false;
+    }, 990);
+  });
+  document.getElementById('backBtn10').addEventListener('click', function(){
+    if (turning) return; turning=true;
+    if (window.__ch10) window.__ch10.exit();
+    resumeBookMusic10();
+    page6El.style.display='block';
+    if (window.__mimi6) window.__mimi6.enter();
+    page6El.classList.add('turnback-start'); void page6El.offsetWidth;
+    page6El.classList.add('turning-back');
+    turnTimer=setTimeout(function(){
+      page10El.style.display='none';
+      page6El.classList.remove('turnback-start'); page6El.classList.remove('turning-back');
       turning=false;
     }, 990);
   });
@@ -1026,13 +1132,13 @@
   document.getElementById('backBtn12').addEventListener('click', function(){
     if (turning) return; turning=true;
     if (window.__ch12) window.__ch12.exit();
-    page6El.style.display='block';
-    if (window.__mimi6) window.__mimi6.enter();
-    page6El.classList.add('turnback-start'); void page6El.offsetWidth;
-    page6El.classList.add('turning-back');
+    page10El.style.display='flex';
+    loadCh10(function(){ silenceBookMusic10(); if (window.__ch10) window.__ch10.enter(); });
+    page10El.classList.add('turnback-start'); void page10El.offsetWidth;
+    page10El.classList.add('turning-back');
     turnTimer=setTimeout(function(){
       page12El.style.display='none';
-      page6El.classList.remove('turnback-start'); page6El.classList.remove('turning-back');
+      page10El.classList.remove('turnback-start'); page10El.classList.remove('turning-back');
       turning=false;
     }, 990);
   });
@@ -1334,10 +1440,11 @@
     musicWanted=!musicWanted;
     this.classList.toggle('muted', !musicWanted);
     if (window.__gardenWind) window.__gardenWind.muted = !musicWanted;
-    if (musicWanted){ if (!window.__gardenOn && !window.__e14On && !window.__l13On && !window.__c12On) startMusic(); } else stopMusic();
+    if (musicWanted){ if (!window.__gardenOn && !window.__e14On && !window.__l13On && !window.__c12On && !window.__c10On) startMusic(); } else stopMusic();
     if (window.__ending14) window.__ending14.setMuted(!musicWanted);
     if (window.__letter13) window.__letter13.setMuted(!musicWanted);
     if (window.__ch12) window.__ch12.setMuted(!musicWanted);
+    if (window.__ch10) window.__ch10.setMuted(!musicWanted);
   });
 
   // — Chapter Five: The Endless Forest (a rose-forest journey) —
@@ -4000,6 +4107,7 @@
       if (page14El.style.display === 'flex') return 14;
       if (page13El.style.display === 'flex') return 13;
       if (page12El.style.display === 'block') return 12;
+      if (page10El.style.display === 'flex') return 10;
       if (page6El.style.display === 'block') return 6;
       if (page5El.style.display === 'block') return 5;
       if (page4El.style.display === 'flex') return 4;
@@ -4012,6 +4120,7 @@
     stage.addEventListener('pointerup', function(e){
       if (!tracking) return; tracking = false;
       if (turning || !opened) return;
+      if (window.__c10Wiping) return;   /* a wipe on the mist never turns the page */
       if (e.target.closest && e.target.closest('button')) return;
       var dx = e.clientX - startX, dy = e.clientY - startY, dt = performance.now() - startT;
       var page = currentPage();
@@ -4020,10 +4129,10 @@
       if (dt > 600 || Math.abs(dx) < need || Math.abs(dx) < Math.abs(dy) * 1.6) return;
       window.__pageTurnSwipe = performance.now();
       if (dx < 0){
-        var nb = { 2: 'nextBtn', 3: 'nextBtn3', 4: 'nextBtn4', 5: 'nextBtn5', 6: 'nextBtn6', 12: 'nextBtn12', 13: 'nextBtn13' }[page];
+        var nb = { 2: 'nextBtn', 3: 'nextBtn3', 4: 'nextBtn4', 5: 'nextBtn5', 6: 'nextBtn6', 10: 'nextBtn10', 12: 'nextBtn12', 13: 'nextBtn13' }[page];
         if (nb) document.getElementById(nb).click();
       } else {
-        var bb = { 2: 'backBtn', 3: 'backBtn3', 4: 'backBtn4', 5: 'backBtn5', 6: 'backBtn6', 12: 'backBtn12', 13: 'backBtn13', 14: 'backBtn14' }[page];
+        var bb = { 2: 'backBtn', 3: 'backBtn3', 4: 'backBtn4', 5: 'backBtn5', 6: 'backBtn6', 10: 'backBtn10', 12: 'backBtn12', 13: 'backBtn13', 14: 'backBtn14' }[page];
         if (bb) document.getElementById(bb).click();
       }
     }, true);
