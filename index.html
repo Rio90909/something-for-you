@@ -267,7 +267,7 @@
   #page10 .shade{position:absolute;inset:0;pointer-events:none;opacity:0;z-index:40;background:linear-gradient(90deg, rgba(70,20,35,.5) 0%, transparent 30%)}
   #page10 .pagenum{color:#774628}
   #backBtn10{left:14px}
-  #nextBtn10{right:14px;opacity:0;pointer-events:none;transition:opacity .6s ease}
+  #nextBtn10{right:14px}
   #nextBtn10.on{opacity:1;pointer-events:auto}
   #backBtn12{left:14px}
   #nextBtn12{right:14px}
@@ -1093,7 +1093,6 @@
   });
   document.getElementById('nextBtn10').addEventListener('click', function(){
     if (turning) return;
-    if (!document.getElementById('nextBtn10').classList.contains('on')) return; /* locked until the 5th reason is revealed */
     turning=true;
     if (window.__ch10) window.__ch10.exitNext();
     page12El.style.display='block';

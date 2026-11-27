@@ -503,8 +503,8 @@ function resetPane(nextIdx){
   computeTextMask();   // fresh mask for the new reason's words
   hintEl.textContent = 'RUB THE GLASS';
   nextBtn.classList.remove('on');
-  var nb10 = document.getElementById('nextBtn10');
-  if (nb10) nb10.classList.remove('on');   /* book: corner Next locks again */
+  /* Book: corner Next stays visible and tappable from the moment page 10
+     opens — never locked behind the 5 reasons. */
   heartPath.style.transition = 'none';
   heartPath.style.strokeDashoffset = String(heartLen);
   heartSvg.style.opacity = '0';
@@ -622,7 +622,7 @@ window.__c10On = false;   /* true only while page 10 is the live page */
 var enteredOnce = false;
 function enter10(){
   /* First arrival: init() (script load) already set up reason 1.
-     Re-entry: fresh reason 1, corner Next locked again. */
+     Re-entry: fresh reason 1; corner Next stays visible. */
   window.__c10On = true;
   S.awake = true;
   if (enteredOnce) resetPane(0);
