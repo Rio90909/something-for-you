@@ -190,15 +190,26 @@ function buildFrost(){
     g2.addColorStop(0, 'rgba(255,255,255,0.2)'); g2.addColorStop(1, 'rgba(255,255,255,0)');
     c.fillStyle = g2; c.beginPath(); c.arc(x, y, rr, 0, 7); c.fill();
   }
-  for (i = 0; i < 3; i++){            // faint vertical drip streaks baked into the mist — glass, not a white card
+  for (i = 0; i < 3; i++){            // faint wobbling drip trails baked into the mist — glass, not a white card
     x = W * (0.15 + Math.random() * 0.7);
-    var w = 2 + Math.random() * 3, h = H * (0.25 + Math.random() * 0.4);
+    var h = H * (0.25 + Math.random() * 0.4);
     var y0 = Math.random() * H * 0.3;
-    var g3 = c.createLinearGradient(0, y0, 0, y0 + h);
-    g3.addColorStop(0, 'rgba(255,255,255,0.10)');
-    g3.addColorStop(0.7, 'rgba(255,255,255,0.05)');
-    g3.addColorStop(1, 'rgba(255,255,255,0)');
-    c.fillStyle = g3; c.fillRect(x - w / 2, y0, w, h);
+    var drift = Math.random() * 12 - 6;   // gentle sideways wander, so the trail is never ruler-straight
+    var steps = Math.max(16, Math.round(h / 3.5));   // dots close enough to read as one thin thread
+    for (var s = 0; s <= steps; s++){
+      var yy = y0 + h * s / steps;
+      var xx = x + drift * s / steps + Math.sin(s * 0.9 + i * 2.1) * 1.5;
+      var fade = 1 - s / steps;           // trail thins and fades as it runs down
+      c.fillStyle = 'rgba(255,255,255,' + (0.12 + 0.08 * fade).toFixed(3) + ')';
+      c.beginPath(); c.arc(xx, yy, 1.0 + 0.5 * fade, 0, 7); c.fill();
+    }
+    /* a tiny glistening bead sits at the tip of the trail, with a crisp
+       specular glint so it reads as a real droplet */
+    var bs = 14;
+    var tipX = x + drift, tipY = y0 + h;
+    c.drawImage(dropSprite, tipX - bs / 2, tipY - bs / 2, bs, bs);
+    c.fillStyle = 'rgba(255,255,255,0.9)';
+    c.beginPath(); c.arc(tipX - 2.5, tipY - 2.5, 1.8, 0, 7); c.fill();
   }
   var v = c.createRadialGradient(W / 2, H / 2, Math.min(W, H) * 0.35, W / 2, H / 2, Math.max(W, H) * 0.75);
   v.addColorStop(0, 'rgba(216,178,190,0)'); v.addColorStop(1, 'rgba(216,178,190,0.18)');

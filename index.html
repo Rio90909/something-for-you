@@ -3143,11 +3143,12 @@
     if (act !== 1) return;
     try{ ac(); }catch(err){}
     pDown = stagePoint(e); pLast = pDown; pMoved = false; pPending = [];
+    window.__c12Blowing = true;  /* Act 1 owns the touch — a swipe here blows candles, never turns the page */
   });
   stage.addEventListener('pointermove', function(e){
     if (!pDown || act !== 1) return;
     const p = stagePoint(e);
-    if (Math.hypot(p.x - pDown.x, p.y - pDown.y) > 10) pMoved = true;
+    if (Math.hypot(p.x - pDown.x, p.y - pDown.y) > 18) pMoved = true;   /* small wobbles still count as taps */
     const dx = p.x - pLast.x;
     /* record the single nearest candle this swipe passes near — they only
        blow out on pointerup, and only if the gesture stays a short blow-out
@@ -3176,18 +3177,25 @@
         const d = Math.hypot(p.x - cp.x, p.y - (cp.y - 12 * fxScale));
         if (d < bestD){ bestD = d; best = i; }
       });
-      if (best >= 0 && bestD < 48){
+      if (best >= 0 && bestD < 64){
         if (CANDLES[best].lit) blowCandle(best, .4); else relightCandle(best);
       }
     } else if (pMoved && act === 1){
-      /* short blow-out swipe only: a long drag is a page turn, not a blow. */
-      if (Math.hypot(p.x - pDown.x, p.y - pDown.y) < 80){
-        pPending.forEach(function(q){ blowCandle(q.i, q.dir); });
-      }
+      /* Any swipe across the flames blows the candles it passes: the
+         __c12Blowing guard (not this handler) now owns the page-turn
+         distinction, so a long drag in Act 1 is a blow, never a turn.
+         Nearest-only per segment still holds — one segment catches at
+         most one candle. */
+      pPending.forEach(function(q){ blowCandle(q.i, q.dir); });
     }
     pDown = null; pLast = null; pPending = [];
   });
-  stage.addEventListener('pointercancel', function(){ pDown = null; pLast = null; pPending = []; });
+  stage.addEventListener('pointercancel', function(){ pDown = null; pLast = null; pPending = []; window.__c12Blowing = false; });
+  /* backstop: the flag must never get stuck — a stuck flag would block page
+     turns on every page, since the stage swipe handler checks it. Bubble
+     phase runs after the stage's capture-phase swipe check, so it can never
+     clear the flag before the swipe handler reads it. */
+  window.addEventListener('pointerup', function(){ window.__c12Blowing = false; });
 
   /* — sky letters: sample any lines into spark points (gold) — */
   function sampleText(lines, font, fs, cy, maxPts){
@@ -3384,7 +3392,7 @@
   }
   function leave12(resumeBook){
     if (!liveNow) return;
-    liveNow = false; window.__c12On = false;
+    liveNow = false; window.__c12On = false; window.__c12Blowing = false;
     stage.classList.remove('live');
     reset12();
     if (resumeBook) resumeBookMusic12();
@@ -4120,6 +4128,7 @@
       if (!tracking) return; tracking = false;
       if (turning || !opened) return;
       if (window.__c10Wiping) return;   /* a wipe on the mist never turns the page */
+      if (window.__c12Blowing) return;  /* blowing out candles never turns the page */
       if (e.target.closest && e.target.closest('button')) return;
       var dx = e.clientX - startX, dy = e.clientY - startY, dt = performance.now() - startT;
       var page = currentPage();
