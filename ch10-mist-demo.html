@@ -36,12 +36,13 @@ body{background:#f7ead9;font-family:'Jost',sans-serif;overflow:hidden}
 .reason{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
   text-align:center;padding:30px 26px;z-index:1;
   font-family:'Playfair Display',serif;font-weight:500;font-size:23px;line-height:1.5;
-  color:var(--rose-text);opacity:0;transform:translateY(6px);
-  transition:opacity .8s ease,transform .8s ease}
-.reason.on{opacity:1;transform:none}
-.heart{position:absolute;left:50%;top:50%;width:300px;height:270px;max-width:96%;
-  transform:translate(-50%,-50%);z-index:2;opacity:0;transition:opacity .5s ease;pointer-events:none}
-.heart path{fill:none;stroke:var(--gold);stroke-width:1.6;stroke-linecap:round}
+  color:var(--rose-text)}
+/* Demo 2: the words live under the frost from the start. The 0.93-alpha
+   frost veils them into a faint unreadable ghost; wiping uncovers them
+   crisp under her fingertip. No opacity pop-in, no blur filter used. */
+@media (max-width:360px){.reason{font-size:20px;line-height:1.45;padding:24px 22px}}
+.heart{position:absolute;z-index:2;opacity:0;transition:opacity .5s ease;pointer-events:none}
+.heart path{fill:none;stroke:var(--gold);stroke-width:1.2;stroke-linecap:round;vector-effect:non-scaling-stroke}
 #mist{position:absolute;inset:0;width:100%;height:100%;z-index:3;touch-action:none;
   transition:opacity .7s ease}
 #drops{position:absolute;inset:0;width:100%;height:100%;z-index:4;pointer-events:none;
@@ -79,7 +80,7 @@ body{background:#f7ead9;font-family:'Jost',sans-serif;overflow:hidden}
     <div class="counter"><span id="idx">1</span> / 5</div>
     <div class="pane" id="pane">
       <div class="reason" id="reason"></div>
-      <svg class="heart" id="heartSvg" viewBox="0 0 200 180" aria-hidden="true">
+      <svg class="heart" id="heartSvg" viewBox="0 0 200 180" preserveAspectRatio="none" aria-hidden="true">
         <path id="heartPath" d="M100,168 C42,122 12,84 22,48 C29,20 62,12 82,30 C94,42 100,56 100,56 C100,56 106,42 118,30 C138,12 171,20 178,48 C188,84 158,122 100,168 Z"/>
       </svg>
       <canvas id="mist"></canvas>
@@ -97,7 +98,7 @@ body{background:#f7ead9;font-family:'Jost',sans-serif;overflow:hidden}
 (function(){
 'use strict';
 /* ================================================================
-   CHAPTER 10 — "Reasons You Are Special" (mist demo, standalone)
+   CHAPTER 10 — "Reasons You Are Special" (mist demo 2, standalone)
    TRANSPLANT NOTE (for the book, page 10):
    - The mist pane OWNS its touch: pane has touch-action:none and the
      handlers below call preventDefault. In the book, the page-turn swipe
@@ -112,6 +113,23 @@ body{background:#f7ead9;font-family:'Jost',sans-serif;overflow:hidden}
      pixels on ONE canvas (#mist); droplets live on a second small
      transparent particle canvas (#drops) — the book already does the
      same (petals canvas + hearts canvas on ch5).
+   - DEMO 2 changes (unified Muse + ChatGPT + Gemini review of demo 1):
+     * Words live UNDER the frost from the start: .reason is always
+       visible; the 0.93-alpha frost veils it into an unreadable ghost
+       until her finger wipes it crisp. No pop-in at a threshold.
+     * Wipe is a real fingertip: hard-core brush (BRUSH 24), no beige
+       halo; a thin champagne wet-edge ring is left at the wipe edge.
+     * Heart: SMALL hairline heart BELOW the words (fitHeartBelow).
+       A framing heart was proven impossible for this text width by QA
+       pixel checks, so the heart is kept as a small 1.2px gold heart
+       under the text — same completion moment, never touches a letter.
+       Draws only after the words are fully readable; Next appears
+       only after the heart finishes.
+     * Sound: NO low hum at all — airy filtered-noise hush only, plus
+       a delicate two-tone plink when a bead rolls. Chord + exhale kept.
+     * Reset hides the old words INSTANTLY (visibility) and brings the
+       fresh frost back fully opaque before the new words may show.
+     * Drops: max 10, max 3 heavy beads, crisp highlight + rim sprite.
    ================================================================ */
 var REASONS = [
   "Because your smile turns an ordinary day into a celebration.",
@@ -144,12 +162,13 @@ var COLS = 20, ROWS = 28;
 var grid = new Uint8Array(COLS * ROWS);
 var cleared = 0, totalCells = COLS * ROWS;
 var REVEAL_AT = 45;               // % cleared -> auto melt the rest
-var BRUSH = 34;                   // erase radius, CSS px
+var BRUSH = 22;                   // erase radius, CSS px — fingertip width, hard core
 
 var S = {
   idx: 0, revealed: false, wiping: false, muted: false,
   droplets: [], heavy: 0, beadsRolled: 0, plinkedPane: false,
   plinks: 0, chords: 0, exhales: 0, hushStarts: 0,
+  revealSeq: 0, everWiped: false, distHeavy: 0,
   meltQ: [], last: null, speed: 0,
   raf: 0, loopOn: false, lastT: 0, awake: true
 };
@@ -166,18 +185,27 @@ function makeSprite(size, stops){
   g.fillStyle = gr; g.fillRect(0, 0, size, size);
   return c;
 }
-var brushSprite = makeSprite(128, [[0, 'rgba(0,0,0,0.9)'], [0.7, 'rgba(0,0,0,0.5)'], [1, 'rgba(0,0,0,0)']]);
-var haloSprite = makeSprite(128, [[0, 'rgba(201,162,75,0.10)'], [1, 'rgba(201,162,75,0)']]);
+/* Demo 2: hard-core brush — genuinely clear glass under the finger with a
+   short soft rim. No wide soft falloff, no beige halo. */
+var brushSprite = makeSprite(128, [[0, 'rgba(0,0,0,1)'], [0.7, 'rgba(0,0,0,0.98)'], [0.9, 'rgba(0,0,0,0.25)'], [1, 'rgba(0,0,0,0)']]);
+/* Demo 2: thin champagne wet-edge ring left on the frost just outside the
+   cleared core — the glint of a real wiped edge, not a painted halo. */
+var ringSprite = makeSprite(128, [[0, 'rgba(201,162,75,0)'], [0.78, 'rgba(201,162,75,0)'], [0.86, 'rgba(201,162,75,0.16)'], [0.94, 'rgba(201,162,75,0.05)'], [1, 'rgba(201,162,75,0)']]);
 var dropSprite = (function(){
-  var c = document.createElement('canvas'); c.width = c.height = 32;
+  var c = document.createElement('canvas'); c.width = c.height = 40;
   var g = c.getContext('2d');
-  var gr = g.createRadialGradient(13, 12, 0, 16, 16, 15);
-  gr.addColorStop(0, 'rgba(255,255,255,0.85)');
-  gr.addColorStop(0.55, 'rgba(235,242,248,0.45)');
+  var gr = g.createRadialGradient(17, 15, 1, 20, 20, 19);
+  gr.addColorStop(0, 'rgba(255,255,255,0.75)');
+  gr.addColorStop(0.5, 'rgba(226,236,244,0.38)');
+  gr.addColorStop(0.85, 'rgba(200,215,228,0.20)');
   gr.addColorStop(1, 'rgba(255,255,255,0)');
-  g.fillStyle = gr; g.fillRect(0, 0, 32, 32);
-  g.fillStyle = 'rgba(255,255,255,0.9)';
-  g.beginPath(); g.arc(12, 11, 3, 0, 7); g.fill();
+  g.fillStyle = gr; g.beginPath(); g.arc(20, 20, 19, 0, 7); g.fill();
+  g.strokeStyle = 'rgba(120,100,112,0.22)'; g.lineWidth = 1.4;   // faint bottom rim
+  g.beginPath(); g.arc(20, 20, 17.5, Math.PI * 0.15, Math.PI * 0.85); g.stroke();
+  g.fillStyle = 'rgba(255,255,255,0.95)';                        // specular highlight
+  g.beginPath(); g.arc(14.5, 13.5, 4.6, 0, 7); g.fill();
+  g.fillStyle = 'rgba(255,255,255,0.55)';
+  g.beginPath(); g.arc(25, 26, 2.2, 0, 7); g.fill();
   return c;
 })();
 function sizeCanvases(){
@@ -192,7 +220,7 @@ function buildFrost(){
   var c = frost.getContext('2d');
   c.setTransform(DPR, 0, 0, DPR, 0, 0);
   c.clearRect(0, 0, W, H);
-  c.fillStyle = 'rgba(245,233,237,0.96)'; c.fillRect(0, 0, W, H); // soft TRANSLUCENT mist
+  c.fillStyle = 'rgba(245,233,237,0.93)'; c.fillRect(0, 0, W, H); // soft TRANSLUCENT mist — words ghost through it
   var i, x, y, rr, a;
   for (i = 0; i < 46; i++){           // soft blotches
     x = Math.random() * W; y = Math.random() * H; rr = 20 + Math.random() * 70;
@@ -243,46 +271,65 @@ function eraseAt(x, y, r, a){
   mctx.restore();
   mark(x, y, r);
 }
-function halo(x, y, r){   // body-heat: faint champagne-gold tint left on the frost
+function edgeRing(x, y, r){   // faint thin champagne glint just outside the cleared core
+  var s = r * 2 + 8;
   mctx.save(); mctx.globalCompositeOperation = 'source-over';
-  mctx.drawImage(haloSprite, x - r * 1.7, y - r * 1.7, r * 3.4, r * 3.4);
+  mctx.drawImage(ringSprite, x - s / 2, y - s / 2, s, s);
   mctx.restore();
 }
 function wipeTo(x, y){
   var p = S.last;
-  if (!p){ halo(x, y, BRUSH); eraseAt(x, y, BRUSH, 0.9); S.last = {x: x, y: y}; return; }
+  if (!p){ eraseAt(x, y, BRUSH, 0.95); edgeRing(x, y, BRUSH); S.last = {x: x, y: y}; return; }
   var dx = x - p.x, dy = y - p.y, d = Math.sqrt(dx * dx + dy * dy);
-  var steps = Math.max(1, Math.ceil(d / 8));
+  var steps = Math.max(1, Math.ceil(d / 6));
   for (var i = 1; i <= steps; i++){
     var sx = p.x + dx * i / steps, sy = p.y + dy * i / steps;
-    halo(sx, sy, BRUSH);
-    eraseAt(sx, sy, BRUSH, 0.9);
-    S.meltQ.push({x: sx, y: sy, at: performance.now() + 140}); // frost keeps receding
-    S.dist = (S.dist || 0) + d / steps;
-    if (S.dist > 30){ S.dist = 0; spawnDrop(sx, sy + BRUSH * 0.55); }
+    eraseAt(sx, sy, BRUSH, 0.95);
+    if (i % 3 === 0) edgeRing(sx, sy, BRUSH);   // sparse: never compound into an outline
+    S.meltQ.push({x: sx, y: sy, at: performance.now() + 170}); // frost keeps receding, gently
+    var sd = d / steps;
+    S.dist = (S.dist || 0) + sd;
+    if (S.dist > 30){ S.dist = 0; spawnDrop(sx, sy + BRUSH * 0.55, false); }
+    S.distHeavy = (S.distHeavy || 0) + sd;
+    if (S.distHeavy > 90){ S.distHeavy = 0; spawnDrop(sx, sy + BRUSH * 0.55, true); }
   }
   S.last = {x: x, y: y};
   if (!S.revealed && cleared / totalCells * 100 >= REVEAL_AT) reveal();
 }
 
 /* ---------- droplets ---------- */
-function spawnDrop(x, y){
-  if (S.droplets.length >= 28) return;
-  var heavy = S.heavy < 3 && Math.random() < 0.22;
+function spawnDrop(x, y, wantHeavy){
+  if (S.droplets.length >= 10) return;   // restrained: a few beads, never a crowd
+  var heavy = !!wantHeavy && S.heavy < 3;
   if (heavy) S.heavy++;
   S.droplets.push({
     x: x + (Math.random() * 10 - 5), y: y,
-    r: heavy ? 3.5 + Math.random() * 1.5 : 1.6 + Math.random() * 1.6,
+    r: heavy ? 4.5 + Math.random() * 1.5 : 1.2 + Math.random() * 1.0,
     heavy: heavy, vy: 0, rolling: false, born: performance.now(),
-    rolled: 0, plinked: false, seed: Math.random() * 6.28, life: 6000
+    rolled: 0, plinked: false, seed: Math.random() * 6.28, life: 6000, static: false
   });
+}
+/* Two beads already sit on the glass when the pane opens; they hold still
+   until her first wipe, then roll. */
+function seedBeads(){
+  for (var i = 0; i < 2; i++){
+    if (S.heavy >= 3) break;
+    S.heavy++;
+    S.droplets.push({
+      x: W * (0.25 + Math.random() * 0.5), y: H * (0.12 + Math.random() * 0.3),
+      r: 4.5 + Math.random() * 1.5, heavy: true, vy: 0, rolling: false,
+      born: performance.now(), rolled: 0, plinked: false, seed: Math.random() * 6.28,
+      life: 9000, static: true
+    });
+  }
+  drawDrops();
 }
 function drawDrops(){
   dctx.clearRect(0, 0, W, H);
   for (var i = 0; i < S.droplets.length; i++){
-    var d = S.droplets[i], a = d.heavy ? 0.8 : 0.5;
+    var d = S.droplets[i], a = d.heavy ? 0.85 : 0.5;
     if (!d.heavy) a *= Math.max(0.25, 1 - (performance.now() - d.born) / d.life);
-    var s = d.r * 2.14;
+    var s = d.r * 2.3;
     dctx.globalAlpha = a;
     dctx.drawImage(dropSprite, d.x - s / 2, d.y - s / 2, s, s);
   }
@@ -291,6 +338,7 @@ function drawDrops(){
 function updateDrops(dt, now){
   for (var i = S.droplets.length - 1; i >= 0; i--){
     var d = S.droplets[i];
+    if (d.static){ if (S.everWiped){ d.static = false; d.born = now; } continue; }
     if (d.heavy && !REDUCED){
       if (!d.rolling && now - d.born > 700){ d.rolling = true; }
       if (d.rolling){
@@ -298,7 +346,7 @@ function updateDrops(dt, now){
         var nx = d.x + Math.sin(now / 380 + d.seed) * 6 * dt;
         var ny = d.y + d.vy * dt;
         d.rolled += Math.abs(ny - d.y);
-        eraseAt(nx, ny, 3.2, 0.5);           // thin clear trail behind the bead
+        eraseAt(nx, ny, 4, 0.6);             // clear trail behind the bead
         d.x = nx; d.y = ny;
         if (d.rolled > 40 && !d.plinked){
           d.plinked = true; S.beadsRolled++;
@@ -313,7 +361,7 @@ function updateDrops(dt, now){
 }
 
 /* ---------- audio (all synthesized, WebAudio) ---------- */
-var AC = null, master = null, hushGain = null, humGain = null, noiseBuf = null;
+var AC = null, master = null, hushGain = null, noiseBuf = null;
 function audioInit(){
   if (AC) return;
   try {
@@ -324,17 +372,13 @@ function audioInit(){
     var ch = noiseBuf.getChannelData(0);
     for (var i = 0; i < len; i++) ch[i] = Math.random() * 2 - 1;
     var src = AC.createBufferSource(); src.buffer = noiseBuf; src.loop = true;
-    var bp = AC.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 850; bp.Q.value = 0.8;
+    /* Demo 2: airy filtered-noise hush ONLY — no low synth hum at all. */
+    var bp = AC.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 1250; bp.Q.value = 0.55;
     hushGain = AC.createGain(); hushGain.gain.value = 0;
     src.connect(bp); bp.connect(hushGain); hushGain.connect(master); src.start();
-    var o1 = AC.createOscillator(); o1.type = 'sine'; o1.frequency.value = 196;
-    var o2 = AC.createOscillator(); o2.type = 'sine'; o2.frequency.value = 294;
-    humGain = AC.createGain(); humGain.gain.value = 0;
-    o1.connect(humGain); o2.connect(humGain); humGain.connect(master); o1.start(); o2.start();
   } catch (e){ AC = null; }
 }
 function setHush(v){ if (AC && hushGain) hushGain.gain.setTargetAtTime(v, AC.currentTime, 0.08); }
-function setHum(v){ if (AC && humGain) humGain.gain.setTargetAtTime(v, AC.currentTime, 0.12); }
 function tone(freq, t0, dur, peak, type){
   if (!AC) return;
   var o = AC.createOscillator(), g = AC.createGain();
@@ -354,6 +398,13 @@ function playPlink(){
   g.gain.exponentialRampToValueAtTime(0.05, t + 0.02);
   g.gain.exponentialRampToValueAtTime(0.0001, t + 0.5);
   o.connect(g); g.connect(master); o.start(t); o.stop(t + 0.6);
+  var o2 = AC.createOscillator(), g2 = AC.createGain();   // crystalline overtone
+  o2.type = 'sine'; o2.frequency.setValueAtTime(3136, t);
+  o2.frequency.exponentialRampToValueAtTime(2400, t + 0.35);
+  g2.gain.setValueAtTime(0.0001, t);
+  g2.gain.exponentialRampToValueAtTime(0.012, t + 0.02);
+  g2.gain.exponentialRampToValueAtTime(0.0001, t + 0.4);
+  o2.connect(g2); g2.connect(master); o2.start(t); o2.stop(t + 0.5);
 }
 function playChord(){
   if (!AC) return; S.chords++;
@@ -372,32 +423,75 @@ function playExhale(){
   src.connect(lp); lp.connect(g); g.connect(master); src.start(t); src.stop(t + 1.5);
 }
 
-/* ---------- reveal / reset ---------- */
+/* ---------- heart (demo 2) ----------
+   A framing heart around this text is geometrically impossible: the
+   heart's lower sides converge toward its point and its top dip sits
+   31% down, so at this text width (258px of a 316px pane) the outline
+   crosses the letters at every size — proven by QA pixel checks
+   (330 gold px inside the text rect at 360px, same at 393/320).
+   So the heart is kept as a SMALL hairline heart BELOW the words:
+   same gold, same draw-once completion moment, guaranteed clear of
+   every letter. If the user ever wants a framing heart, the text
+   column would have to narrow to ~200px first — his call. */
 var heartLen = 0;
+function fitHeartBelow(){
+  var pr = pane.getBoundingClientRect();
+  var range = document.createRange();
+  range.selectNodeContents(reasonEl);
+  var rb = range.getBoundingClientRect();
+  var cx = rb.left - pr.left + rb.width / 2;
+  var top = rb.bottom - pr.top + 14;   // clear space below the last line
+  var avail = pr.height - top - 8;
+  var h = Math.max(30, Math.min(50, avail));
+  var w = h * 200 / 180;
+  heartSvg.style.left = (cx - w / 2) + 'px';
+  heartSvg.style.top = top + 'px';
+  heartSvg.style.width = w + 'px';
+  heartSvg.style.height = h + 'px';
+  heartSvg.style.transform = 'none';
+  heartLen = heartPath.getTotalLength();
+  heartPath.style.strokeDasharray = String(heartLen);
+  heartPath.style.strokeDashoffset = String(heartLen);
+}
+
+/* ---------- reveal / reset ---------- */
 function reveal(){
   if (S.revealed) return;
-  S.revealed = true; S.wiping = false; setHush(0); setHum(0);
+  S.revealed = true; S.wiping = false; setHush(0);
+  var tok = ++S.revealSeq;   // guards the delayed heart / Next steps
   mist.style.opacity = '0'; drops.style.opacity = '0';
-  reasonEl.classList.add('on');
   hintEl.textContent = '';
   setTimeout(function(){
     mist.style.display = 'none'; drops.style.display = 'none';
   }, 750);
-  heartSvg.style.opacity = '1';
-  heartPath.style.transition = 'stroke-dashoffset 1.4s ease .2s';
-  heartPath.style.strokeDashoffset = '0';
-  nextBtn.textContent = S.idx >= REASONS.length - 1 ? 'Read again \u21BA' : 'Next reason \u2192';
-  nextBtn.classList.add('on');
   playChord();
+  /* Order: words readable (mist melted) -> thin heart draws -> Next appears. */
+  setTimeout(function(){
+    if (tok !== S.revealSeq || !S.revealed) return;
+    fitHeartBelow();
+    heartSvg.style.opacity = '1';
+    void heartPath.getBoundingClientRect();
+    heartPath.style.transition = 'stroke-dashoffset 1.2s ease';
+    heartPath.style.strokeDashoffset = '0';
+    setTimeout(function(){
+      if (tok !== S.revealSeq || !S.revealed) return;
+      nextBtn.textContent = S.idx >= REASONS.length - 1 ? 'Read again \u21BA' : 'Next reason \u2192';
+      nextBtn.classList.add('on');
+    }, REDUCED ? 250 : 1250);
+  }, REDUCED ? 150 : 850);
 }
 function resetPane(nextIdx){
+  S.revealSeq++;   // cancel any pending heart / Next timeouts from the last reveal
   S.idx = nextIdx;
-  S.revealed = false; S.wiping = false; S.last = null; S.dist = 0;
+  S.revealed = false; S.wiping = false; S.last = null; S.dist = 0; S.distHeavy = 0;
   S.droplets = []; S.heavy = 0; S.plinkedPane = false; S.meltQ = [];
   grid = new Uint8Array(COLS * ROWS); cleared = 0;
   idxEl.textContent = String(nextIdx + 1);
+  /* Hide the old words INSTANTLY (no fade) and keep the new words hidden
+     behind fresh frost until the mist is fully back — no ghosting, no
+     crossfade, the next reason is unreadable until she wipes it. */
+  reasonEl.style.visibility = 'hidden';
   reasonEl.textContent = REASONS[nextIdx];
-  reasonEl.classList.remove('on');
   hintEl.textContent = 'RUB THE GLASS';
   nextBtn.classList.remove('on');
   heartPath.style.transition = 'none';
@@ -406,13 +500,19 @@ function resetPane(nextIdx){
   breathEl.classList.add('on');
   playExhale();
   paintFrost();
-  mist.style.display = 'block'; drops.style.display = 'block';
   dctx.clearRect(0, 0, W, H);
-  mist.style.opacity = '0'; drops.style.opacity = '0';
-  requestAnimationFrame(function(){
-    mist.style.opacity = '1'; drops.style.opacity = '1';
-  });
-  setTimeout(function(){ breathEl.classList.remove('on'); }, 800);
+  seedBeads();
+  mist.style.display = 'block'; drops.style.display = 'block';
+  /* Frost back to fully opaque INSTANTLY (no fade-in): the new words must
+     be behind solid mist before they are allowed to show. */
+  mist.style.transition = 'none'; drops.style.transition = 'none';
+  mist.style.opacity = '1'; drops.style.opacity = '1';
+  void mist.offsetWidth;
+  mist.style.transition = ''; drops.style.transition = '';
+  setTimeout(function(){
+    reasonEl.style.visibility = 'visible';
+    breathEl.classList.remove('on');
+  }, 650);
   ensureLoop();
 }
 nextBtn.addEventListener('click', function(){
@@ -443,13 +543,13 @@ pane.addEventListener('pointerdown', function(e){
   e.preventDefault();
   audioInit();
   if (AC && AC.state === 'suspended') AC.resume();
-  S.wiping = true; window.__c10Wiping = true;   // book: page-turn swipe ignores this
+  S.wiping = true; S.everWiped = true; window.__c10Wiping = true;   // book: page-turn swipe ignores this
   S.hushStarts++;
   var p = localPos(e);
   showFinger(e.clientX, e.clientY);
   try { pane.setPointerCapture(e.pointerId); } catch (err){}
   wipeTo(p.x, p.y);
-  setHum(0.012);   // very soft warm hum while melting
+  setHush(0.015);   // soft airy hush starts the moment the finger lands
   ensureLoop();
 });
 pane.addEventListener('pointermove', function(e){
@@ -460,7 +560,7 @@ pane.addEventListener('pointermove', function(e){
   var now = performance.now();
   if (S.lastT) S.speed = Math.min(1, (Math.abs(p.x - S.last.x) + Math.abs(p.y - S.last.y)) / Math.max(1, now - S.lastT) / 1.2);
   S.lastT = now;
-  setHush(0.03 * S.speed);   // very soft, short warm hush while melting
+  setHush(0.05 * S.speed);   // airy hush, follows the finger's speed
   wipeTo(p.x, p.y);
 });
 function endWipe(){
@@ -470,7 +570,7 @@ function endWipe(){
      for the whole stroke (the book's capture-phase pointerup runs before
      this bubble handler), and is cleared the moment the finger lifts. */
   S.wiping = false; window.__c10Wiping = false; S.last = null; S.lastT = 0;
-  setHush(0); setHum(0);
+  setHush(0);
   if (SHOW_FINGER) fingerEl.style.display = 'none';
 }
 pane.addEventListener('pointerup', endWipe);
@@ -485,11 +585,13 @@ function loop(ts){
   var busy = false;
   while (S.meltQ.length && S.meltQ[0].at <= now){
     var m = S.meltQ.shift();
-    eraseAt(m.x, m.y, BRUSH * 1.3, 0.45);
+    eraseAt(m.x, m.y, BRUSH * 1.05, 0.25);
     if (!S.revealed && cleared / totalCells * 100 >= REVEAL_AT) reveal();
   }
   if (S.meltQ.length) busy = true;
-  if (S.droplets.length){ updateDrops(dt, now); drawDrops(); busy = true; }
+  var anyLive = false;
+  for (var k = 0; k < S.droplets.length; k++) if (!S.droplets[k].static){ anyLive = true; break; }
+  if (anyLive){ updateDrops(dt, now); drawDrops(); busy = true; }
   if (S.wiping) busy = true;
   if (busy){ S.raf = requestAnimationFrame(loop); }
   else { S.loopOn = false; }
@@ -514,7 +616,7 @@ window.__ch10 = {
   setMuted: setMuted,
   next: function(){ nextBtn.click(); },
   enter: function(){ S.awake = true; ensureLoop(); },
-  exit: function(){ S.awake = false; if (S.raf) cancelAnimationFrame(S.raf); S.loopOn = false; setHush(0); setHum(0); }
+  exit: function(){ S.awake = false; if (S.raf) cancelAnimationFrame(S.raf); S.loopOn = false; setHush(0); }
 };
 
 /* ---------- init ---------- */
@@ -526,6 +628,7 @@ function init(){
   heartLen = heartPath.getTotalLength();
   heartPath.style.strokeDasharray = String(heartLen);
   heartPath.style.strokeDashoffset = String(heartLen);
+  seedBeads();
   var rt;
   window.addEventListener('resize', function(){
     clearTimeout(rt);
