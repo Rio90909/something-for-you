@@ -44,7 +44,7 @@ body{background:#f7ead9;font-family:'Jost',sans-serif;overflow:hidden}
    clears a spot, the words underneath are instantly crisp. */
 @media (max-width:360px){.reason{font-size:20px;line-height:1.45;padding:24px 22px}}
 .heart{position:absolute;z-index:2;opacity:0;transition:opacity .5s ease;pointer-events:none}
-.heart path{fill:none;stroke:var(--gold);stroke-width:1.0;stroke-linecap:round;vector-effect:non-scaling-stroke}
+.heart path{fill:none;stroke:var(--gold);stroke-width:1.6;stroke-linecap:round;vector-effect:non-scaling-stroke}
 #mist{position:absolute;inset:0;width:100%;height:100%;z-index:3;touch-action:none;
   transition:opacity .7s ease}
 #drops{position:absolute;inset:0;width:100%;height:100%;z-index:4;pointer-events:none;
@@ -126,8 +126,8 @@ body{background:#f7ead9;font-family:'Jost',sans-serif;overflow:hidden}
      * MIST TEXTURE: stronger gentle variation — rose-tinted blotches,
        more condensation blobs, faint baked-in drip streaks — so the
        pane never reads as a plain white card. Still only 2–3 beads.
-     * COMPLETED REASON: slightly smaller heart (cap 44) with more
-       deliberate spacing (20px) below the words.
+     * COMPLETED REASON: bigger heart (cap 63, ~70x63, stroke 1.6)
+       with 20px spacing below the words — user order 2026-11-27.
      * Everything else kept from demo 4: small heart below the words,
        airy hush + plink, chord, breath reset, 10s auto-advance.
    - DEMO 4 changes (user voice order, 2026-11-27; base = demo 2):
@@ -518,8 +518,8 @@ function playExhale(){
    same gold, same draw-once completion moment, guaranteed clear of
    every letter. If the user ever wants a framing heart, the text
    column would have to narrow to ~200px first — his call.
-   Demo 5: slightly smaller (cap 44px) with 20px of clear space
-   below the words — ChatGPT's fix. */
+   User order 2026-11-27: bigger + more visible (cap 63px, ~70x63,
+   stroke 1.6) with 20px of clear space below the words. */
 var heartLen = 0;
 function fitHeartBelow(){
   var pr = pane.getBoundingClientRect();
@@ -529,7 +529,7 @@ function fitHeartBelow(){
   var cx = rb.left - pr.left + rb.width / 2;
   var top = rb.bottom - pr.top + 20;   // demo 5: more deliberate clear space below the last line
   var avail = pr.height - top - 8;
-  var h = Math.max(28, Math.min(44, avail));   // demo 5: slightly smaller heart
+  var h = Math.max(28, Math.min(63, avail));   // user order 2026-11-27: a little bigger + more visible (~70x63)
   var w = h * 200 / 180;
   heartSvg.style.left = (cx - w / 2) + 'px';
   heartSvg.style.top = top + 'px';
