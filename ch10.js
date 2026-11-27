@@ -565,11 +565,17 @@ function localPos(e){
   return {x: e.clientX - r.left, y: e.clientY - r.top};
 }
 pane.addEventListener('pointerdown', function(e){
+  /* FIX 2026-11-27 (wipe race): EVERY finger-down on the glass marks a
+     wipe — even after the reason is revealed. Before, the early return
+     below left window.__c10Wiping false for strokes on the clear glass,
+     so the book's swipe handler read a long rub as a page-turn swipe
+     and flipped back to chapter 6. */
+  window.__c10Wiping = true;
   if (S.revealed) return;
   e.preventDefault();
   audioInit();
   if (AC && AC.state === 'suspended') AC.resume();
-  S.wiping = true; S.everWiped = true; window.__c10Wiping = true;   // book: page-turn swipe ignores this
+  S.wiping = true; S.everWiped = true;   // book: page-turn swipe ignores this (flag set above)
   S.hushStarts++;
   var p = localPos(e);
   try { pane.setPointerCapture(e.pointerId); } catch (err){}
@@ -598,6 +604,13 @@ function endWipe(){
 }
 pane.addEventListener('pointerup', endWipe);
 pane.addEventListener('pointercancel', endWipe);
+/* Window-level backstop: if the pane never sees the pointerup (finger
+   released off the pane, gesture interrupted), the flag must not stay
+   stuck true — a stuck flag would block page turns everywhere, since
+   the book's swipe handler checks it on every page. Bubble phase on
+   window runs AFTER the stage's capture-phase swipe check, so it can
+   never clear the flag before the swipe handler reads it. */
+window.addEventListener('pointerup', function(){ window.__c10Wiping = false; });
 
 /* ---------- single rAF loop (only while something moves) ---------- */
 function loop(ts){
@@ -633,6 +646,7 @@ function leave10(){
   /* Own cleanup only — the book's nav handlers own the book-music
      fade/resume (this file runs outside the book's main scope). */
   window.__c10On = false;
+  window.__c10Wiping = false;   /* FIX 2026-11-27: never leave the page with a wipe flag set */
   S.awake = false;
   disarmAdv();
   if (S.raf) cancelAnimationFrame(S.raf);
