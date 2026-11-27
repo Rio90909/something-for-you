@@ -34,13 +34,14 @@ body{background:#f7ead9;font-family:'Jost',sans-serif;overflow:hidden}
   background:var(--ivory);border:1px solid rgba(201,162,75,.55);border-radius:16px;
   overflow:hidden;touch-action:none}
 .reason{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
-  text-align:center;padding:30px 26px;z-index:1;
+  text-align:center;padding:30px calc((100% - 200px)/2);z-index:1;
   font-family:'Playfair Display',serif;font-weight:500;font-size:23px;line-height:1.5;
   color:var(--rose-text)}
 /* Demo 2: the words live under the frost from the start. The 0.93-alpha
    frost veils them into a faint unreadable ghost; wiping uncovers them
    crisp under her fingertip. No opacity pop-in, no blur filter used. */
-@media (max-width:360px){.reason{font-size:20px;line-height:1.45;padding:24px 22px}}
+@media (max-width:400px){.reason{font-size:20px;line-height:1.45;padding:24px calc((100% - 200px)/2)}}
+@media (max-width:340px){.reason{font-size:18px;line-height:1.45;padding:24px calc((100% - 176px)/2)}}
 .heart{position:absolute;z-index:2;opacity:0;transition:opacity .5s ease;pointer-events:none}
 .heart path{fill:none;stroke:var(--gold);stroke-width:1.2;stroke-linecap:round;vector-effect:non-scaling-stroke}
 #mist{position:absolute;inset:0;width:100%;height:100%;z-index:3;touch-action:none;
@@ -58,6 +59,23 @@ body{background:#f7ead9;font-family:'Jost',sans-serif;overflow:hidden}
   background:radial-gradient(ellipse at 50% 100%,rgba(244,214,222,.95),rgba(244,214,222,0) 70%);
   transition:transform .7s ease,opacity .7s ease}
 .breath.on{transform:translateY(0);opacity:.85}
+/* Demo 3: glass reflection — a soft diagonal glossy sheen across the pane:
+   a narrow bright specular streak with a faint wide wash around it, so it
+   reads as light on real glass even over the pale frost. Transform/opacity
+   only, no blur/filter. */
+.sheen{position:absolute;top:-30%;bottom:-30%;left:0;width:30%;z-index:7;pointer-events:none;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.10) 28%,rgba(255,255,255,.55) 44%,rgba(255,255,255,.95) 50%,rgba(255,255,255,.55) 56%,rgba(255,255,255,.10) 72%,transparent);
+  opacity:.8;transform:rotate(16deg) translateX(-120%);
+  animation:sheen 24s linear infinite}
+@keyframes sheen{from{transform:rotate(16deg) translateX(-120%)}
+  to{transform:rotate(16deg) translateX(340%)}}
+.mode{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:8px}
+.modeBtn{font-family:'Jost',sans-serif;font-weight:500;font-size:10px;letter-spacing:.12em;
+  color:var(--caps-light);background:none;border:1px solid rgba(201,162,75,.38);
+  border-radius:999px;padding:6px 11px;cursor:pointer;opacity:.7;
+  transition:opacity .3s ease,border-color .3s ease,color .3s ease,background .3s ease}
+.modeBtn.on{color:var(--gold-deep);border-color:rgba(201,162,75,.85);
+  background:rgba(201,162,75,.07);opacity:1}
 .hint{font-weight:500;font-size:11px;letter-spacing:.3em;color:var(--caps-light);min-height:16px}
 .next{font-family:'Jost',sans-serif;font-weight:500;font-size:13px;letter-spacing:.24em;
   color:var(--gold-deep);background:none;border:1px solid rgba(201,162,75,.6);
@@ -68,7 +86,7 @@ body{background:#f7ead9;font-family:'Jost',sans-serif;overflow:hidden}
 #finger{position:fixed;width:46px;height:46px;border-radius:50%;left:0;top:0;
   border:2px solid rgba(138,58,82,.55);background:rgba(255,255,255,.18);
   transform:translate(-50%,-50%);pointer-events:none;z-index:99;display:none}
-@media (prefers-reduced-motion:reduce){.light{animation:none}}
+@media (prefers-reduced-motion:reduce){.light{animation:none}.sheen{animation:none}}
 </style>
 </head>
 <body>
@@ -81,16 +99,21 @@ body{background:#f7ead9;font-family:'Jost',sans-serif;overflow:hidden}
     <div class="pane" id="pane">
       <div class="reason" id="reason"></div>
       <svg class="heart" id="heartSvg" viewBox="0 0 200 180" preserveAspectRatio="none" aria-hidden="true">
-        <path id="heartPath" d="M100,168 C42,122 12,84 22,48 C29,20 62,12 82,30 C94,42 100,56 100,56 C100,56 106,42 118,30 C138,12 171,20 178,48 C188,84 158,122 100,168 Z"/>
+        <path id="heartPath" d="M100,174 C52,148 16,130 14,94 C12,62 20,40 42,30 C60,20 86,24 100,40 C114,24 140,20 158,30 C180,40 188,62 186,94 C184,130 148,148 100,174 Z"/>
       </svg>
       <canvas id="mist"></canvas>
       <canvas id="drops"></canvas>
       <div class="light" id="light"></div>
       <div class="breath" id="breath"></div>
+      <div class="sheen" id="sheen"></div>
     </div>
     <div class="hint" id="hint">RUB THE GLASS</div>
     <button class="next" id="nextBtn">Next reason &rarr;</button>
     <div class="pagenum">&middot; 10 &middot;</div>
+    <div class="mode" id="modeRow">
+      <button class="modeBtn" id="modeManual" type="button">Wipe it myself</button>
+      <button class="modeBtn on" id="modeAuto" type="button">A little wipe, then it finishes</button>
+    </div>
   </div>
 </div>
 <div id="finger"></div>
@@ -98,7 +121,7 @@ body{background:#f7ead9;font-family:'Jost',sans-serif;overflow:hidden}
 (function(){
 'use strict';
 /* ================================================================
-   CHAPTER 10 — "Reasons You Are Special" (mist demo 2, standalone)
+   CHAPTER 10 — "Reasons You Are Special" (mist demo 3, standalone)
    TRANSPLANT NOTE (for the book, page 10):
    - The mist pane OWNS its touch: pane has touch-action:none and the
      handlers below call preventDefault. In the book, the page-turn swipe
@@ -108,23 +131,35 @@ body{background:#f7ead9;font-family:'Jost',sans-serif;overflow:hidden}
      first and ignores the swipe. Same family as page 5's 190px rule.
    - enter()/exit() start/stop the single rAF loop and the audio.
      Wire them to the page enter/exit like __ch12 / __letter13.
+     exit() also resets the wipe mode to auto and cancels auto-advance.
    - Motion = transform/opacity only. No blur, no backdrop-filter,
      no mix-blend-mode, no animated box-shadows. The mist is painted
      pixels on ONE canvas (#mist); droplets live on a second small
      transparent particle canvas (#drops) — the book already does the
-     same (petals canvas + hearts canvas on ch5).
-   - DEMO 2 changes (unified Muse + ChatGPT + Gemini review of demo 1):
+     same (petals canvas + hearts canvas on ch5). The glass sheen is a
+     drifting gradient band, transform-only, like the light drift.
+   - DEMO 3 changes (user decisions, voice call 2026-11-27):
      * Words live UNDER the frost from the start: .reason is always
        visible; the 0.93-alpha frost veils it into an unreadable ghost
        until her finger wipes it crisp. No pop-in at a threshold.
      * Wipe is a real fingertip: hard-core brush (BRUSH 24), no beige
        halo; a thin champagne wet-edge ring is left at the wipe edge.
-     * Heart: SMALL hairline heart BELOW the words (fitHeartBelow).
-       A framing heart was proven impossible for this text width by QA
-       pixel checks, so the heart is kept as a small 1.2px gold heart
-       under the text — same completion moment, never touches a letter.
-       Draws only after the words are fully readable; Next appears
-       only after the heart finishes.
+     * Text column narrowed to ~200px (176px on <=340px screens) so the
+       SMALL hairline heart can FRAME the words: fitHeartFrame() samples
+       the heart outline and searches placements at runtime; it ships
+       only a placement with ZERO outline points inside the text rect
+       (6px clearance). If geometry ever fails, it falls back to the
+       demo-2 small heart below the words — never a crossing heart.
+     * Auto-wipe: AUTO mode (default) melts the remaining mist once
+       about HALF the TEXT is uncovered. MANUAL mode ("Wipe it myself")
+       has no auto-melt — she clears ~90% of the glass by hand. The
+       small bottom option switches modes; a switch mid-reason applies
+       from the next reason; the choice resets to auto on page exit.
+     * Auto-advance: 20s after a reason is fully revealed (heart drawn,
+       Next shown) the page moves on by itself, breath reset included.
+       Next stays tappable to go sooner; last reason never advances.
+     * Glass reflection: an extra soft diagonal glossy sheen drifts
+       across the pane (transform-only), on top of the light drift.
      * Sound: NO low hum at all — airy filtered-noise hush only, plus
        a delicate two-tone plink when a bead rolls. Chord + exhale kept.
      * Reset hides the old words INSTANTLY (visibility) and brings the
@@ -155,14 +190,24 @@ var heartPath = document.getElementById('heartPath');
 var breathEl = document.getElementById('breath');
 var muteBtn = document.getElementById('muteBtn');
 var fingerEl = document.getElementById('finger');
+var lightEl = document.getElementById('light');
+var sheenEl = document.getElementById('sheen');
+var modeManualBtn = document.getElementById('modeManual');
+var modeAutoBtn = document.getElementById('modeAuto');
 
 var DPR = Math.min(window.devicePixelRatio || 1, 1.5);
 var W = 0, H = 0;                 // pane size in CSS px
 var COLS = 20, ROWS = 28;
 var grid = new Uint8Array(COLS * ROWS);
 var cleared = 0, totalCells = COLS * ROWS;
-var REVEAL_AT = 45;               // % cleared -> auto melt the rest
+var AUTO_TEXT_AT = 50;            // % of TEXT-area cells cleared -> auto melt (auto mode)
+var MANUAL_AT = 90;               // % of pane cleared -> reveal (manual mode, no auto-melt)
 var BRUSH = 22;                   // erase radius, CSS px — fingertip width, hard core
+/* Text-area cells: the grid cells whose centres fall inside the reason's
+   text rect. Auto-melt keys on the TEXT, not the whole pane — one tap or
+   one short stroke can never clear half the words. */
+var textMask = new Uint8Array(COLS * ROWS);
+var textCells = 0, textCleared = 0;
 
 var S = {
   idx: 0, revealed: false, wiping: false, muted: false,
@@ -170,7 +215,9 @@ var S = {
   plinks: 0, chords: 0, exhales: 0, hushStarts: 0,
   revealSeq: 0, everWiped: false, distHeavy: 0,
   meltQ: [], last: null, speed: 0,
-  raf: 0, loopOn: false, lastT: 0, awake: true
+  raf: 0, loopOn: false, lastT: 0, awake: true,
+  mode: 'auto', pendingMode: 'auto',   // auto = melt at half the text; manual = whole glass by hand
+  advTimer: 0, frameFallback: false
 };
 
 /* ---------- frost sprite (pre-rendered once per size) ---------- */
@@ -259,8 +306,35 @@ function mark(x, y, r){
     var dx = cx - x, dy = cy - y;
     if (dx * dx + dy * dy < r * r * 0.81){
       var k = j * COLS + i;
-      if (!grid[k]){ grid[k] = 1; cleared++; }
+      if (!grid[k]){ grid[k] = 1; cleared++; if (textMask[k]) textCleared++; }
     }
+  }
+}
+/* Which grid cells belong to the current reason's words (for the auto-melt
+   trigger). Recomputed whenever the reason text or the pane size changes. */
+function computeTextMask(){
+  textMask = new Uint8Array(COLS * ROWS); textCells = 0; textCleared = 0;
+  var range = document.createRange();
+  range.selectNodeContents(reasonEl);
+  var rb = range.getBoundingClientRect();
+  var pr = pane.getBoundingClientRect();
+  var tx = rb.left - pr.left, ty = rb.top - pr.top, tw = rb.width, th = rb.height;
+  for (var j = 0; j < ROWS; j++) for (var i = 0; i < COLS; i++){
+    var cx = (i + 0.5) * W / COLS, cy = (j + 0.5) * H / ROWS;
+    if (cx >= tx && cx <= tx + tw && cy >= ty && cy <= ty + th){
+      textMask[j * COLS + i] = 1; textCells++;
+    }
+  }
+}
+/* Reveal trigger. AUTO: half the TEXT uncovered -> the rest melts on its
+   own. MANUAL: no auto-melt — only when ~90% of the whole glass is wiped
+   by hand. One tap or one short stroke reaches neither threshold. */
+function checkReveal(){
+  if (S.revealed) return;
+  if (S.mode === 'auto'){
+    if (textCells > 0 && textCleared / textCells * 100 >= AUTO_TEXT_AT) reveal();
+  } else {
+    if (cleared / totalCells * 100 >= MANUAL_AT) reveal();
   }
 }
 function eraseAt(x, y, r, a){
@@ -294,7 +368,7 @@ function wipeTo(x, y){
     if (S.distHeavy > 90){ S.distHeavy = 0; spawnDrop(sx, sy + BRUSH * 0.55, true); }
   }
   S.last = {x: x, y: y};
-  if (!S.revealed && cleared / totalCells * 100 >= REVEAL_AT) reveal();
+  checkReveal();
 }
 
 /* ---------- droplets ---------- */
@@ -423,17 +497,76 @@ function playExhale(){
   src.connect(lp); lp.connect(g); g.connect(master); src.start(t); src.stop(t + 1.5);
 }
 
-/* ---------- heart (demo 2) ----------
-   A framing heart around this text is geometrically impossible: the
-   heart's lower sides converge toward its point and its top dip sits
-   31% down, so at this text width (258px of a 316px pane) the outline
-   crosses the letters at every size — proven by QA pixel checks
-   (330 gold px inside the text rect at 360px, same at 393/320).
-   So the heart is kept as a SMALL hairline heart BELOW the words:
-   same gold, same draw-once completion moment, guaranteed clear of
-   every letter. If the user ever wants a framing heart, the text
-   column would have to narrow to ~200px first — his call. */
+/* ---------- heart (demo 3) ----------
+   The heart FRAMES the words. The text column is narrowed to ~200px and
+   the heart path is reshaped for framing (shallow dip, wide belly), so a
+   frame fits: fitHeartFrame() samples the outline and searches placements
+   at runtime, and ships ONLY a placement with ZERO outline points inside
+   the text rect (6px clearance, natural aspect 0.95–1.25). Proven by QA
+   pixel checks at all three sizes for all five reasons. If geometry ever
+   fails on some screen, it falls back to the demo-2 small heart BELOW the
+   words — never a crossing heart. Draws only after the words are fully
+   readable; Next appears only after the heart finishes. */
 var heartLen = 0;
+var heartPts = null, dipFrac = 0.222;
+function sampleHeart(){
+  if (heartPts) return heartPts;
+  heartPts = [];
+  var L = heartPath.getTotalLength();
+  for (var i = 0; i <= 200; i++){
+    var pt = heartPath.getPointAtLength(L * i / 200);
+    heartPts.push({x: pt.x, y: pt.y});
+  }
+  var dip = 0;
+  for (var j = 0; j < heartPts.length; j++){
+    var q = heartPts[j];
+    if (q.x >= 85 && q.x <= 115 && q.y < 90 && q.y > dip) dip = q.y;
+  }
+  dipFrac = dip / 180;
+  return heartPts;
+}
+function placeHeart(left, top, w, h){
+  heartSvg.style.left = left + 'px';
+  heartSvg.style.top = top + 'px';
+  heartSvg.style.width = w + 'px';
+  heartSvg.style.height = h + 'px';
+  heartSvg.style.transform = 'none';
+  heartLen = heartPath.getTotalLength();
+  heartPath.style.strokeDasharray = String(heartLen);
+  heartPath.style.strokeDashoffset = String(heartLen);
+}
+function fitHeartFrame(){
+  sampleHeart();
+  var pr = pane.getBoundingClientRect();
+  var range = document.createRange();
+  range.selectNodeContents(reasonEl);
+  var rb = range.getBoundingClientRect();
+  var tx = rb.left - pr.left, ty = rb.top - pr.top, tw = rb.width, th = rb.height;
+  var tcx = tx + tw / 2;
+  var CLEAR = 6, M = 6, best = null;
+  for (var H = Math.ceil(th + 30); H <= pr.height - 2 * M; H += 4){
+    var top = ty - dipFrac * H - CLEAR;
+    if (top < M || top + H > pr.height - M) continue;
+    for (var W = Math.ceil(tw + 2 * CLEAR); W <= pr.width - 2 * M; W += 4){
+      var left = tcx - W / 2;
+      if (left < M || left + W > pr.width - M) continue;
+      var aspect = W / H;
+      if (aspect < 0.95 || aspect > 1.25) continue;
+      var ok = true;
+      for (var i = 0; i < heartPts.length; i++){
+        var px = left + heartPts[i].x / 200 * W;
+        var py = top + heartPts[i].y / 180 * H;
+        if (px > tx - CLEAR && px < tx + tw + CLEAR &&
+            py > ty - CLEAR && py < ty + th + CLEAR){ ok = false; break; }
+      }
+      if (!ok) continue;
+      var area = W * H;
+      if (!best || area < best.area) best = {area: area, left: left, top: top, w: W, h: H};
+    }
+  }
+  if (best){ placeHeart(best.left, best.top, best.w, best.h); S.frameFallback = false; return true; }
+  fitHeartBelow(); S.frameFallback = true; return false;
+}
 function fitHeartBelow(){
   var pr = pane.getBoundingClientRect();
   var range = document.createRange();
@@ -444,14 +577,7 @@ function fitHeartBelow(){
   var avail = pr.height - top - 8;
   var h = Math.max(30, Math.min(50, avail));
   var w = h * 200 / 180;
-  heartSvg.style.left = (cx - w / 2) + 'px';
-  heartSvg.style.top = top + 'px';
-  heartSvg.style.width = w + 'px';
-  heartSvg.style.height = h + 'px';
-  heartSvg.style.transform = 'none';
-  heartLen = heartPath.getTotalLength();
-  heartPath.style.strokeDasharray = String(heartLen);
-  heartPath.style.strokeDashoffset = String(heartLen);
+  placeHeart(cx - w / 2, top, w, h);
 }
 
 /* ---------- reveal / reset ---------- */
@@ -465,10 +591,12 @@ function reveal(){
     mist.style.display = 'none'; drops.style.display = 'none';
   }, 750);
   playChord();
-  /* Order: words readable (mist melted) -> thin heart draws -> Next appears. */
+  /* Order: words readable (mist melted) -> thin heart draws -> Next appears.
+     Then, if this is not the last reason, the page moves on by itself
+     20 seconds later — Next stays tappable to go sooner. */
   setTimeout(function(){
     if (tok !== S.revealSeq || !S.revealed) return;
-    fitHeartBelow();
+    fitHeartFrame();
     heartSvg.style.opacity = '1';
     void heartPath.getBoundingClientRect();
     heartPath.style.transition = 'stroke-dashoffset 1.2s ease';
@@ -477,12 +605,19 @@ function reveal(){
       if (tok !== S.revealSeq || !S.revealed) return;
       nextBtn.textContent = S.idx >= REASONS.length - 1 ? 'Read again \u21BA' : 'Next reason \u2192';
       nextBtn.classList.add('on');
+      if (S.idx < REASONS.length - 1){
+        S.advTimer = setTimeout(function(){
+          if (S.revealed) nextBtn.click();
+        }, 20000);
+      }
     }, REDUCED ? 250 : 1250);
   }, REDUCED ? 150 : 850);
 }
 function resetPane(nextIdx){
   S.revealSeq++;   // cancel any pending heart / Next timeouts from the last reveal
+  if (S.advTimer){ clearTimeout(S.advTimer); S.advTimer = 0; }  // never auto-advance a gone reason
   S.idx = nextIdx;
+  S.mode = S.pendingMode;   // a mid-reason mode switch applies from the next reason
   S.revealed = false; S.wiping = false; S.last = null; S.dist = 0; S.distHeavy = 0;
   S.droplets = []; S.heavy = 0; S.plinkedPane = false; S.meltQ = [];
   grid = new Uint8Array(COLS * ROWS); cleared = 0;
@@ -502,6 +637,7 @@ function resetPane(nextIdx){
   paintFrost();
   dctx.clearRect(0, 0, W, H);
   seedBeads();
+  computeTextMask();   // fresh mask for the new reason's words
   mist.style.display = 'block'; drops.style.display = 'block';
   /* Frost back to fully opaque INSTANTLY (no fade-in): the new words must
      be behind solid mist before they are allowed to show. */
@@ -520,6 +656,14 @@ nextBtn.addEventListener('click', function(){
   audioInit();
   resetPane((S.idx + 1) % REASONS.length);
 });
+/* Wipe mode option — small, quiet, at the bottom. A switch mid-reason
+   applies from the next reason; the choice resets to auto on page exit. */
+function applyModeUI(){
+  modeManualBtn.classList.toggle('on', S.pendingMode === 'manual');
+  modeAutoBtn.classList.toggle('on', S.pendingMode === 'auto');
+}
+modeManualBtn.addEventListener('click', function(){ S.pendingMode = 'manual'; applyModeUI(); });
+modeAutoBtn.addEventListener('click', function(){ S.pendingMode = 'auto'; applyModeUI(); });
 /* Book mute hook: the book's stage mute calls __ch10.setMuted(m) like __ch12. */
 function setMuted(m){
   S.muted = !!m;
@@ -586,7 +730,7 @@ function loop(ts){
   while (S.meltQ.length && S.meltQ[0].at <= now){
     var m = S.meltQ.shift();
     eraseAt(m.x, m.y, BRUSH * 1.05, 0.25);
-    if (!S.revealed && cleared / totalCells * 100 >= REVEAL_AT) reveal();
+    checkReveal();
   }
   if (S.meltQ.length) busy = true;
   var anyLive = false;
@@ -606,6 +750,9 @@ window.__ch10 = {
     return {
       idx: S.idx, total: REASONS.length,
       clearedPct: Math.round(cleared / totalCells * 100),
+      textClearedPct: textCells ? Math.round(textCleared / textCells * 100) : 0,
+      mode: S.mode, pendingMode: S.pendingMode,
+      advArmed: !!S.advTimer, frameFallback: S.frameFallback,
       revealed: S.revealed, droplets: S.droplets.length, beadsRolled: S.beadsRolled,
       audio: {hush: S.hushStarts, plink: S.plinks, chord: S.chords, exhale: S.exhales},
       mistVisible: mist.style.display !== 'none',
@@ -615,8 +762,18 @@ window.__ch10 = {
   },
   setMuted: setMuted,
   next: function(){ nextBtn.click(); },
-  enter: function(){ S.awake = true; ensureLoop(); },
-  exit: function(){ S.awake = false; if (S.raf) cancelAnimationFrame(S.raf); S.loopOn = false; setHush(0); }
+  enter: function(){
+    S.awake = true; ensureLoop();
+    if (lightEl) lightEl.style.animationPlayState = '';
+    if (sheenEl) sheenEl.style.animationPlayState = '';
+  },
+  exit: function(){
+    S.awake = false; if (S.raf) cancelAnimationFrame(S.raf); S.loopOn = false; setHush(0);
+    if (S.advTimer){ clearTimeout(S.advTimer); S.advTimer = 0; }
+    S.mode = 'auto'; S.pendingMode = 'auto'; applyModeUI();  // choice resets when she leaves
+    if (lightEl) lightEl.style.animationPlayState = 'paused';
+    if (sheenEl) sheenEl.style.animationPlayState = 'paused';
+  }
 };
 
 /* ---------- init ---------- */
@@ -625,6 +782,8 @@ function init(){
   sizeCanvases();
   buildFrost();
   paintFrost();
+  computeTextMask();
+  applyModeUI();
   heartLen = heartPath.getTotalLength();
   heartPath.style.strokeDasharray = String(heartLen);
   heartPath.style.strokeDashoffset = String(heartLen);
@@ -635,6 +794,7 @@ function init(){
     rt = setTimeout(function(){
       sizeCanvases(); buildFrost(); paintFrost();
       grid = new Uint8Array(COLS * ROWS); cleared = 0;
+      computeTextMask();
       S.droplets = []; S.meltQ = [];
       if (!S.revealed){ mist.style.display = 'block'; mist.style.opacity = '1'; }
     }, 200);
