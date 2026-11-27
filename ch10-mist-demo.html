@@ -37,20 +37,14 @@ body{background:#f7ead9;font-family:'Jost',sans-serif;overflow:hidden}
   text-align:center;padding:30px 26px;z-index:1;
   font-family:'Playfair Display',serif;font-weight:500;font-size:23px;line-height:1.5;
   color:var(--rose-text)}
-/* Demo 4: the words live under the frost from the start. The 0.91-alpha
-   frost veils them into a faint ghost, and .ghosted softens the letters
-   into a blurry smudge (static text-shadow, no blur filter) — she can
-   tell words are written there, but cannot read them before wiping.
-   Wiping uncovers them crisp under her fingertip. No opacity pop-in. */
+/* Demo 5: NO BLUR on the words at all (user agreed with Gemini).
+   The reason text is 100% sharp underneath from the very start and
+   ONLY the frost layer above it does the hiding — before she wipes
+   there is no blurry word-ghost, just mist. The moment her finger
+   clears a spot, the words underneath are instantly crisp. */
 @media (max-width:360px){.reason{font-size:20px;line-height:1.45;padding:24px 22px}}
-/* Ghost state: the glyphs go transparent and only their soft shadow
-   shows — a blurry pink smudge where the words are, no readable
-   letterforms. Removed the moment the reveal starts, so the words are
-   crisp as the mist lifts. Static paint only — never animated,
-   never a filter. */
-.reason.ghosted{color:rgba(122,46,68,0);text-shadow:0 0 6px rgba(122,46,68,.9),0 0 11px rgba(122,46,68,.5)}
 .heart{position:absolute;z-index:2;opacity:0;transition:opacity .5s ease;pointer-events:none}
-.heart path{fill:none;stroke:var(--gold);stroke-width:1.2;stroke-linecap:round;vector-effect:non-scaling-stroke}
+.heart path{fill:none;stroke:var(--gold);stroke-width:1.0;stroke-linecap:round;vector-effect:non-scaling-stroke}
 #mist{position:absolute;inset:0;width:100%;height:100%;z-index:3;touch-action:none;
   transition:opacity .7s ease}
 #drops{position:absolute;inset:0;width:100%;height:100%;z-index:4;pointer-events:none;
@@ -81,7 +75,7 @@ body{background:#f7ead9;font-family:'Jost',sans-serif;overflow:hidden}
     <h1 class="title">Reasons You Are Special</h1>
     <div class="counter"><span id="idx">1</span> / 5</div>
     <div class="pane" id="pane">
-      <div class="reason ghosted" id="reason"></div>
+      <div class="reason" id="reason"></div>
       <svg class="heart" id="heartSvg" viewBox="0 0 200 180" preserveAspectRatio="none" aria-hidden="true">
         <path id="heartPath" d="M100,168 C42,122 12,84 22,48 C29,20 62,12 82,30 C94,42 100,56 100,56 C100,56 106,42 118,30 C138,12 171,20 178,48 C188,84 158,122 100,168 Z"/>
       </svg>
@@ -99,7 +93,7 @@ body{background:#f7ead9;font-family:'Jost',sans-serif;overflow:hidden}
 (function(){
 'use strict';
 /* ================================================================
-   CHAPTER 10 — "Reasons You Are Special" (mist demo 4, standalone)
+   CHAPTER 10 — "Reasons You Are Special" (mist demo 5, standalone)
    TRANSPLANT NOTE (for the book, page 10):
    - The mist pane OWNS its touch: pane has touch-action:none and the
      handlers below call preventDefault. In the book, the page-turn swipe
@@ -114,6 +108,28 @@ body{background:#f7ead9;font-family:'Jost',sans-serif;overflow:hidden}
      pixels on ONE canvas (#mist); droplets live on a second small
      transparent particle canvas (#drops) — the book already does the
      same (petals canvas + hearts canvas on ch5).
+   - DEMO 5 changes (user-approved three-way review of demo 4, 2026-11-27;
+     ratings Muse 8.5 / ChatGPT 8.2 / Gemini 7.8; base = demo 4):
+     * NO BLUR on the words at all (user agreed with Gemini): the blur /
+       ghost is deleted entirely — the text is 100% sharp underneath
+       from the start and ONLY the fully-opaque frost layer hides it.
+       No blurry word-ghost before wiping, just mist; wiped words are
+       instantly crisp. No blur filter anywhere.
+     * SMOOTH CONTINUOUS WIPE: the stamped rimmed circles and the
+       champagne edge-ring are gone — the finger draws one continuous
+       path (strokeSeg: feather pass under a clear core pass, round
+       caps/joins). No rings, no gold outlines, no bright blobs; the
+       cleared region is genuinely transparent. Trail narrower (BRUSH 18).
+     * AUTO-MELT SOONER (Gemini's fix): the trigger measures only the
+       centre text zone and melts at ~50% cleared — a few good swipes
+       over the words, instead of 25–30s of rubbing.
+     * MIST TEXTURE: stronger gentle variation — rose-tinted blotches,
+       more condensation blobs, faint baked-in drip streaks — so the
+       pane never reads as a plain white card. Still only 2–3 beads.
+     * COMPLETED REASON: slightly smaller heart (cap 44) with more
+       deliberate spacing (20px) below the words.
+     * Everything else kept from demo 4: small heart below the words,
+       airy hush + plink, chord, breath reset, 10s auto-advance.
    - DEMO 4 changes (user voice order, 2026-11-27; base = demo 2):
      * NO glass shine: demo 3's specular streak is gone entirely.
      * NO auto-melt / auto-wipe: the whole pane never clears itself.
@@ -133,8 +149,9 @@ body{background:#f7ead9;font-family:'Jost',sans-serif;overflow:hidden}
      * Heart: small hairline heart BELOW the words, as in demo 2.
    - DEMO 2 changes (unified Muse + ChatGPT + Gemini review of demo 1):
      * Words live UNDER the frost from the start: .reason is always
-       visible; the 0.91-alpha frost veils it into a faint unreadable
-       ghost until her finger wipes it crisp. No pop-in at a threshold.
+       visible; the frost veils it until her finger wipes it crisp.
+       No pop-in at a threshold. (Demo 5: frost is now fully opaque
+       and the faint ghost is deleted — no blur at all.)
      * Wipe is a real fingertip: hard-core brush (BRUSH 24), no beige
        halo; a thin champagne wet-edge ring is left at the wipe edge.
      * Heart: SMALL hairline heart BELOW the words (fitHeartBelow).
@@ -183,15 +200,14 @@ var cleared = 0, totalCells = COLS * ROWS;
    text rect. The reveal keys on the TEXT, not the whole pane. */
 var textMask = new Uint8Array(COLS * ROWS);
 var textCells = 0, textCleared = 0;
-var TEXT_AT = 88;                 // % of TEXT-area cells cleared -> reveal
-                                  // (manual wipe only; no auto-melt). The trigger keys
-                                  // on the WORDS, not the whole pane: wiping around
-                                  // the words uncovers them, then the whole glass
-                                  // clears. One stroke or one short scrub can never
-                                  // reach it; two or three strokes over the words do.
-var BRUSH = 22;                   // erase radius, CSS px — fingertip width, hard core
-var MARK_R = 34;                  // demo 4: GENEROUS grid-mark radius — wiping anywhere
-                                  // around the words clears the dust around them
+var TEXT_AT = 50;                 // % of CENTRE TEXT-zone cells cleared -> auto-melt
+                                  // (demo 5, Gemini's fix): measure only the words'
+                                  // own cells, not the whole tall pane, and melt at
+                                  // ~50% — a few good swipes over the words clear
+                                  // the glass, instead of 25–30s of rubbing.
+var BRUSH = 18;                   // erase radius, CSS px — narrower, a real fingertip
+var MARK_R = 24;                  // demo 5: grid-mark radius close to the visible
+                                  // trail, so the measured % matches what she sees
 
 var S = {
   idx: 0, revealed: false, wiping: false, muted: false,
@@ -204,22 +220,10 @@ var S = {
 
 /* ---------- frost sprite (pre-rendered once per size) ---------- */
 var frost = document.createElement('canvas');
-/* Pre-rendered sprites (perf: no per-stamp/per-frame radial gradients) */
-function makeSprite(size, stops){
-  var c = document.createElement('canvas');
-  c.width = c.height = size;
-  var g = c.getContext('2d');
-  var gr = g.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
-  for (var i = 0; i < stops.length; i++) gr.addColorStop(stops[i][0], stops[i][1]);
-  g.fillStyle = gr; g.fillRect(0, 0, size, size);
-  return c;
-}
-/* Demo 2: hard-core brush — genuinely clear glass under the finger with a
-   short soft rim. No wide soft falloff, no beige halo. */
-var brushSprite = makeSprite(128, [[0, 'rgba(0,0,0,1)'], [0.7, 'rgba(0,0,0,0.98)'], [0.9, 'rgba(0,0,0,0.25)'], [1, 'rgba(0,0,0,0)']]);
-/* Demo 2: thin champagne wet-edge ring left on the frost just outside the
-   cleared core — the glint of a real wiped edge, not a painted halo. */
-var ringSprite = makeSprite(128, [[0, 'rgba(201,162,75,0)'], [0.78, 'rgba(201,162,75,0)'], [0.86, 'rgba(201,162,75,0.16)'], [0.94, 'rgba(201,162,75,0.05)'], [1, 'rgba(201,162,75,0)']]);
+/* Demo 5: the stamp sprites are GONE. Demo 4 stamped a rimmed circle on
+   every touch move, which made the 'caterpillar / stacked-coins' rings
+   all three reviewers flagged. The finger now draws ONE smooth
+   continuous path (strokeSeg below) — no stamps, no rings. */
 var dropSprite = (function(){
   var c = document.createElement('canvas'); c.width = c.height = 40;
   var g = c.getContext('2d');
@@ -249,26 +253,41 @@ function buildFrost(){
   var c = frost.getContext('2d');
   c.setTransform(DPR, 0, 0, DPR, 0, 0);
   c.clearRect(0, 0, W, H);
-  c.fillStyle = 'rgba(245,233,237,0.91)'; c.fillRect(0, 0, W, H); // soft TRANSLUCENT mist — words ghost through it (demo 4: faint but visible)
+  c.fillStyle = 'rgba(245,233,237,1)'; c.fillRect(0, 0, W, H); // demo 5: FULLY OPAQUE mist — the sharp words underneath must not bleed through at all; the frost alone does the hiding (no blur anywhere)
   var i, x, y, rr, a;
-  for (i = 0; i < 46; i++){           // soft blotches
-    x = Math.random() * W; y = Math.random() * H; rr = 20 + Math.random() * 70;
+  for (i = 0; i < 54; i++){           // soft blotches — white and warm rose, for gentle unevenness
+    x = Math.random() * W; y = Math.random() * H; rr = 18 + Math.random() * 78;
     var g = c.createRadialGradient(x, y, 0, x, y, rr);
-    g.addColorStop(0, 'rgba(255,255,255,' + (0.05 + Math.random() * 0.06) + ')');
-    g.addColorStop(1, 'rgba(255,255,255,0)');
+    if (Math.random() < 0.45){
+      g.addColorStop(0, 'rgba(226,188,200,' + (0.06 + Math.random() * 0.08) + ')');
+      g.addColorStop(1, 'rgba(226,188,200,0)');
+    } else {
+      g.addColorStop(0, 'rgba(255,255,255,' + (0.07 + Math.random() * 0.08) + ')');
+      g.addColorStop(1, 'rgba(255,255,255,0)');
+    }
     c.fillStyle = g; c.beginPath(); c.arc(x, y, rr, 0, 7); c.fill();
   }
   for (i = 0; i < 2400; i++){         // fine condensation speckle
-    x = Math.random() * W; y = Math.random() * H; rr = 0.5 + Math.random() * 1.1;
-    a = 0.05 + Math.random() * 0.09;
+    x = Math.random() * W; y = Math.random() * H; rr = 0.5 + Math.random() * 1.2;
+    a = 0.05 + Math.random() * 0.1;
     c.fillStyle = Math.random() < 0.6 ? 'rgba(255,255,255,' + a + ')' : 'rgba(214,170,185,' + a + ')';
     c.beginPath(); c.arc(x, y, rr, 0, 7); c.fill();
   }
-  for (i = 0; i < 12; i++){           // bigger soft condensation blobs
-    x = Math.random() * W; y = Math.random() * H; rr = 6 + Math.random() * 16;
+  for (i = 0; i < 16; i++){           // bigger soft condensation blobs
+    x = Math.random() * W; y = Math.random() * H; rr = 6 + Math.random() * 20;
     var g2 = c.createRadialGradient(x, y, 0, x, y, rr);
-    g2.addColorStop(0, 'rgba(255,255,255,0.14)'); g2.addColorStop(1, 'rgba(255,255,255,0)');
+    g2.addColorStop(0, 'rgba(255,255,255,0.2)'); g2.addColorStop(1, 'rgba(255,255,255,0)');
     c.fillStyle = g2; c.beginPath(); c.arc(x, y, rr, 0, 7); c.fill();
+  }
+  for (i = 0; i < 3; i++){            // faint vertical drip streaks baked into the mist — glass, not a white card
+    x = W * (0.15 + Math.random() * 0.7);
+    var w = 2 + Math.random() * 3, h = H * (0.25 + Math.random() * 0.4);
+    var y0 = Math.random() * H * 0.3;
+    var g3 = c.createLinearGradient(0, y0, 0, y0 + h);
+    g3.addColorStop(0, 'rgba(255,255,255,0.10)');
+    g3.addColorStop(0.7, 'rgba(255,255,255,0.05)');
+    g3.addColorStop(1, 'rgba(255,255,255,0)');
+    c.fillStyle = g3; c.fillRect(x - w / 2, y0, w, h);
   }
   var v = c.createRadialGradient(W / 2, H / 2, Math.min(W, H) * 0.35, W / 2, H / 2, Math.max(W, H) * 0.75);
   v.addColorStop(0, 'rgba(216,178,190,0)'); v.addColorStop(1, 'rgba(216,178,190,0.18)');
@@ -308,38 +327,51 @@ function computeTextMask(){
     }
   }
 }
-/* Demo 4 reveal trigger: ~88% of the WORDS uncovered by hand. No auto-melt,
-   no pane-wide shortcut — one tap or one short stroke reaches neither. */
+/* Demo 5 auto-melt trigger: ~50% of the CENTRE TEXT-zone cells cleared
+   by hand — a few good swipes over the words melt the whole glass.
+   The melt is reveal()'s own mist fade; no separate animation. */
 function checkReveal(){
   if (S.revealed) return;
   if (textCells > 0 && textCleared / textCells * 100 >= TEXT_AT) reveal();
 }
 function eraseAt(x, y, r, a){
+  /* Only rolling beads use this now: one small soft dot that clears a
+     faint trail behind a bead. The finger's wipe uses strokeSeg. */
   mctx.save();
   mctx.globalCompositeOperation = 'destination-out';
   mctx.globalAlpha = a;
-  mctx.drawImage(brushSprite, x - r, y - r, r * 2, r * 2);
+  mctx.beginPath(); mctx.arc(x, y, r, 0, 7); mctx.fill();
   mctx.restore();
-  /* demo 4: eraseAt never marks the grid — only the finger's wipe does,
-     with the generous MARK_R radius; rolling beads clear a trail visually
-     but must not count toward the reveal. */
+  /* eraseAt never marks the grid — only the finger's wipe does;
+     rolling beads clear a trail visually but must not count
+     toward the reveal. */
 }
-function edgeRing(x, y, r){   // faint thin champagne glint just outside the cleared core
-  var s = r * 2 + 8;
-  mctx.save(); mctx.globalCompositeOperation = 'source-over';
-  mctx.drawImage(ringSprite, x - s / 2, y - s / 2, s, s);
+function strokeSeg(x0, y0, x1, y1){
+  /* Demo 5: ONE smooth continuous path (lineCap/lineJoin 'round'),
+     two passes — a soft feather pass under a clear core pass.
+     No stamps, no outer ring, no gold outlines: the cleared glass
+     is genuinely transparent with one subtle soft boundary. */
+  mctx.save();
+  mctx.globalCompositeOperation = 'destination-out';
+  mctx.lineCap = 'round'; mctx.lineJoin = 'round';
+  mctx.strokeStyle = 'rgba(0,0,0,0.32)';
+  mctx.lineWidth = BRUSH * 2 + 14;
+  mctx.beginPath(); mctx.moveTo(x0, y0); mctx.lineTo(x1, y1); mctx.stroke();
+  mctx.strokeStyle = 'rgba(0,0,0,0.95)';
+  mctx.lineWidth = BRUSH * 2;
+  mctx.beginPath(); mctx.moveTo(x0, y0); mctx.lineTo(x1, y1); mctx.stroke();
   mctx.restore();
 }
 function wipeTo(x, y){
   var p = S.last;
-  if (!p){ eraseAt(x, y, BRUSH, 0.95); edgeRing(x, y, BRUSH); mark(x, y, MARK_R); S.last = {x: x, y: y}; return; }
+  if (!p){ strokeSeg(x, y, x, y); mark(x, y, MARK_R); S.last = {x: x, y: y}; return; }
   var dx = x - p.x, dy = y - p.y, d = Math.sqrt(dx * dx + dy * dy);
-  var steps = Math.max(1, Math.ceil(d / 6));
+  var steps = Math.max(1, Math.ceil(d / 4));
   for (var i = 1; i <= steps; i++){
+    var px = p.x + dx * (i - 1) / steps, py = p.y + dy * (i - 1) / steps;
     var sx = p.x + dx * i / steps, sy = p.y + dy * i / steps;
-    eraseAt(sx, sy, BRUSH, 0.95);
-    mark(sx, sy, MARK_R);   // generous: dust around the finger clears too
-    if (i % 3 === 0) edgeRing(sx, sy, BRUSH);   // sparse: never compound into an outline
+    strokeSeg(px, py, sx, sy);   // continuous path — never a chain of stamps
+    mark(sx, sy, MARK_R);
     var sd = d / steps;
     S.dist = (S.dist || 0) + sd;
     if (S.dist > 30){ S.dist = 0; spawnDrop(sx, sy + BRUSH * 0.55, false); }
@@ -485,7 +517,9 @@ function playExhale(){
    So the heart is kept as a SMALL hairline heart BELOW the words:
    same gold, same draw-once completion moment, guaranteed clear of
    every letter. If the user ever wants a framing heart, the text
-   column would have to narrow to ~200px first — his call. */
+   column would have to narrow to ~200px first — his call.
+   Demo 5: slightly smaller (cap 44px) with 20px of clear space
+   below the words — ChatGPT's fix. */
 var heartLen = 0;
 function fitHeartBelow(){
   var pr = pane.getBoundingClientRect();
@@ -493,9 +527,9 @@ function fitHeartBelow(){
   range.selectNodeContents(reasonEl);
   var rb = range.getBoundingClientRect();
   var cx = rb.left - pr.left + rb.width / 2;
-  var top = rb.bottom - pr.top + 14;   // clear space below the last line
+  var top = rb.bottom - pr.top + 20;   // demo 5: more deliberate clear space below the last line
   var avail = pr.height - top - 8;
-  var h = Math.max(30, Math.min(50, avail));
+  var h = Math.max(28, Math.min(44, avail));   // demo 5: slightly smaller heart
   var w = h * 200 / 180;
   heartSvg.style.left = (cx - w / 2) + 'px';
   heartSvg.style.top = top + 'px';
@@ -511,7 +545,6 @@ function fitHeartBelow(){
 function reveal(){
   if (S.revealed) return;
   S.revealed = true; S.wiping = false; setHush(0);
-  reasonEl.classList.remove('ghosted');   // words sharpen as the mist lifts
   var tok = ++S.revealSeq;   // guards the delayed heart / Next steps
   mist.style.opacity = '0'; drops.style.opacity = '0';
   hintEl.textContent = '';
@@ -550,7 +583,6 @@ function resetPane(nextIdx){
      crossfade, the next reason is unreadable until she wipes it. */
   reasonEl.style.visibility = 'hidden';
   reasonEl.textContent = REASONS[nextIdx];
-  reasonEl.classList.add('ghosted');   // next reason starts as a smudge
   computeTextMask();   // fresh mask for the new reason's words
   hintEl.textContent = 'RUB THE GLASS';
   nextBtn.classList.remove('on');
@@ -663,7 +695,7 @@ function loop(ts){
   var now = performance.now();
   var dt = S.lastT ? Math.min(0.05, (now - S.lastT) / 1000) : 0.016;
   S.lastT = now;
-  var busy = false;   // demo 4: no meltQ — nothing clears itself
+  var busy = false;   // demo 5: no melt queue — the melt is reveal()'s own mist fade
   var anyLive = false;
   for (var k = 0; k < S.droplets.length; k++) if (!S.droplets[k].static){ anyLive = true; break; }
   if (anyLive){ updateDrops(dt, now); drawDrops(); busy = true; }
