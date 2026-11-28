@@ -37,6 +37,13 @@
      * AUTO-MELT SOONER (Gemini's fix): the trigger measures only the
        centre text zone and melts at ~50% cleared — a few good swipes
        over the words, instead of 25–30s of rubbing.
+     * THREE-STROKE SHORTCUT (user's order, 2026-11-28, from his phone
+       video): the 50% rule still took 40s+ because the metric counts
+       the whole text rectangle, empty corners included. So the 3rd real
+       wipe stroke now cleans the whole pane by itself — a stroke is a
+       pointerdown -> move -> pointerup that travelled >20px, so taps
+       never count. The 50% melt stays as the early path for thorough
+       wipers. Stroke count resets on every new reason.
      * MIST TEXTURE: stronger gentle variation — rose-tinted blotches,
        more condensation blobs, faint baked-in drip streaks — so the
        pane never reads as a plain white card. Still only 2–3 beads.
@@ -126,6 +133,7 @@ var S = {
   plinks: 0, chords: 0, exhales: 0, hushStarts: 0,
   revealSeq: 0, everWiped: false, distHeavy: 0,
   advTimer: 0, advArmedAt: 0, last: null, speed: 0,
+  strokes: 0, strokeDist: 0,   // 3-stroke shortcut: real wipe strokes this reason
   raf: 0, loopOn: false, lastT: 0, awake: true
 };
 
@@ -270,12 +278,17 @@ function eraseAt(x, y, r, a){
 }
 function strokeSeg(x0, y0, x1, y1){
   /* Demo 5: ONE smooth continuous path (lineCap/lineJoin 'round'),
-     two passes — a soft feather pass under a clear core pass.
-     No stamps, no outer ring, no gold outlines: the cleared glass
-     is genuinely transparent with one subtle soft boundary. */
+     three passes — a very wide faint halo, a soft feather pass under
+     a clear core pass. No stamps, no outer ring, no gold outlines:
+     the cleared glass is genuinely transparent with one subtle soft
+     boundary. The halo (2026-11-28) keeps the wipe edge from reading
+     as a hard-edged blob; the core width (BRUSH) is unchanged. */
   mctx.save();
   mctx.globalCompositeOperation = 'destination-out';
   mctx.lineCap = 'round'; mctx.lineJoin = 'round';
+  mctx.strokeStyle = 'rgba(0,0,0,0.12)';
+  mctx.lineWidth = BRUSH * 2 + 30;
+  mctx.beginPath(); mctx.moveTo(x0, y0); mctx.lineTo(x1, y1); mctx.stroke();
   mctx.strokeStyle = 'rgba(0,0,0,0.32)';
   mctx.lineWidth = BRUSH * 2 + 14;
   mctx.beginPath(); mctx.moveTo(x0, y0); mctx.lineTo(x1, y1); mctx.stroke();
@@ -288,6 +301,7 @@ function wipeTo(x, y){
   var p = S.last;
   if (!p){ strokeSeg(x, y, x, y); mark(x, y, MARK_R); S.last = {x: x, y: y}; return; }
   var dx = x - p.x, dy = y - p.y, d = Math.sqrt(dx * dx + dy * dy);
+  S.strokeDist = (S.strokeDist || 0) + d;   // 3-stroke shortcut: travelled distance this stroke
   var steps = Math.max(1, Math.ceil(d / 4));
   for (var i = 1; i <= steps; i++){
     var px = p.x + dx * (i - 1) / steps, py = p.y + dy * (i - 1) / steps;
@@ -503,6 +517,7 @@ function resetPane(nextIdx){
   disarmAdv();     // never auto-advance a gone reason
   S.idx = nextIdx;
   S.revealed = false; S.wiping = false; S.last = null; S.dist = 0; S.distHeavy = 0;
+  S.strokes = 0; S.strokeDist = 0;   // 3-stroke shortcut: fresh count for the new reason
   S.droplets = []; S.heavy = 0; S.plinkedPane = false;
   grid = new Uint8Array(COLS * ROWS); cleared = 0;
   idxEl.textContent = String(nextIdx + 1);
@@ -587,6 +602,7 @@ pane.addEventListener('pointerdown', function(e){
   audioInit();
   if (AC && AC.state === 'suspended') AC.resume();
   S.wiping = true; S.everWiped = true;   // book: page-turn swipe ignores this (flag set above)
+  S.strokeDist = 0;   // 3-stroke shortcut: fresh stroke starts here
   S.hushStarts++;
   var p = localPos(e);
   try { pane.setPointerCapture(e.pointerId); } catch (err){}
@@ -613,7 +629,20 @@ function endWipe(){
   S.wiping = false; window.__c10Wiping = false; S.last = null; S.lastT = 0;
   setHush(0);
 }
-pane.addEventListener('pointerup', endWipe);
+/* THREE-STROKE SHORTCUT (user's order, 2026-11-28): the 3rd real wipe
+   stroke cleans the whole pane. A stroke is a pointerdown -> move ->
+   pointerup that travelled >20px, so taps never count. Runs only on
+   pointerup — a pointercancel is an interrupted gesture, not a stroke.
+   The 50% text-zone melt (checkReveal) stays as the early path. */
+function countStroke(){
+  if (S.revealed) return;
+  if ((S.strokeDist || 0) > 20){
+    S.strokes++;
+    if (S.strokes >= 3) reveal();
+  }
+  S.strokeDist = 0;
+}
+pane.addEventListener('pointerup', function(){ countStroke(); endWipe(); });
 pane.addEventListener('pointercancel', endWipe);
 /* Window-level backstop: if the pane never sees the pointerup (finger
    released off the pane, gesture interrupted), the flag must not stay
@@ -677,6 +706,7 @@ window.__ch10 = {
       clearedPct: Math.round(cleared / totalCells * 100),
       textClearedPct: textCells ? Math.round(textCleared / textCells * 100) : 0,
       revealed: S.revealed, droplets: S.droplets.length, beadsRolled: S.beadsRolled,
+      strokes: S.strokes, strokeDist: Math.round(S.strokeDist || 0),
       audio: {hush: S.hushStarts, plink: S.plinks, chord: S.chords, exhale: S.exhales},
       mistVisible: mist.style.display !== 'none',
       heartDrawn: heartPath.style.strokeDashoffset === '0',
